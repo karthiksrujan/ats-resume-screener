@@ -2,7 +2,7 @@ import os
 import shutil
 from pathlib import Path
 from typing import List
-from fastapi import FastAPI, UploadFile, File, Form, HTTPException
+from fastapi import FastAPI, UploadFile, File, Form, HTTPException, BackgroundTasks
 from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.middleware.cors import CORSMiddleware
@@ -10,6 +10,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from backend.config import UPLOAD_DIR, SAMPLE_DATA_DIR
 from backend.parser import parse_resume
 from backend.screener import screen_resume, HAS_GEMINI
+from backend.generator import generate_ats_pdf, generate_ats_docx
 
 app = FastAPI(title="Rooman AI Resume Screener API")
 
@@ -129,3 +130,31 @@ async def screen_resumes(
         "count": len(results),
         "candidates": results
     }
+
+@app.post("/api/generate-resume-pdf")
+async def generate_resume_pdf(data: dict, background_tasks: BackgroundTasks):
+    """Generates an ATS-compliant PDF resume from form data."""
+    try:
+        file_path = generate_ats_pdf(data)
+        background_tasks.add_task(os.remove, file_path)
+        return FileResponse(
+            path=file_path,
+            filename=file_path.name,
+            media_type="application/pdf"
+        )
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Failed to generate PDF: {str(e)}")
+
+@app.post("/api/generate-resume-docx")
+async def generate_resume_docx(data: dict, background_tasks: BackgroundTasks):
+    """Generates an ATS-compliant DOCX resume from form data."""
+    try:
+        file_path = generate_ats_docx(data)
+        background_tasks.add_task(os.remove, file_path)
+        return FileResponse(
+            path=file_path,
+            filename=file_path.name,
+            media_type="application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+        )
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Failed to generate DOCX: {str(e)}")

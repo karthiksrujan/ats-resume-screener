@@ -534,6 +534,241 @@ document.addEventListener('DOMContentLoaded', () => {
         showToast("Exported shortlist as JSON", "success");
     });
 
+    // ==========================================
+    // ATS Resume Builder Module
+    // ==========================================
+
+    // Tabs Navigation Elements
+    const tabScreener = document.getElementById('tabScreener');
+    const tabGenerator = document.getElementById('tabGenerator');
+    const screenerWorkspace = document.getElementById('screenerWorkspace');
+    const generatorWorkspace = document.getElementById('generatorWorkspace');
+
+    // Builder Inputs & Containers
+    const builderName = document.getElementById('builderName');
+    const builderEmail = document.getElementById('builderEmail');
+    const builderPhone = document.getElementById('builderPhone');
+    const builderLocation = document.getElementById('builderLocation');
+    const builderLinkedin = document.getElementById('builderLinkedin');
+    const builderSummary = document.getElementById('builderSummary');
+    const builderSkills = document.getElementById('builderSkills');
+    const experienceContainer = document.getElementById('experienceContainer');
+    const educationContainer = document.getElementById('educationContainer');
+
+    // Builder Buttons
+    const btnAddExperience = document.getElementById('btnAddExperience');
+    const btnAddEducation = document.getElementById('btnAddEducation');
+    const btnGeneratePDF = document.getElementById('btnGeneratePDF');
+    const btnGenerateDOCX = document.getElementById('btnGenerateDOCX');
+    const btnLoadSampleBuilder = document.getElementById('btnLoadSampleBuilder');
+    const btnResetBuilder = document.getElementById('btnResetBuilder');
+
+    // Tab switching handlers
+    tabScreener.addEventListener('click', () => {
+        tabScreener.classList.add('active');
+        tabGenerator.classList.remove('active');
+        screenerWorkspace.style.display = 'grid';
+        generatorWorkspace.style.display = 'none';
+        showToast("Switched to Candidate Screener", "success");
+    });
+
+    tabGenerator.addEventListener('click', () => {
+        tabGenerator.classList.add('active');
+        tabScreener.classList.remove('active');
+        generatorWorkspace.style.display = 'grid';
+        screenerWorkspace.style.display = 'none';
+        showToast("Switched to ATS Resume Builder", "success");
+    });
+
+    // Add work experience block
+    function createExperienceRow(title = '', company = '', dates = '', location = '', desc = '') {
+        const row = document.createElement('div');
+        row.className = 'builder-item-row';
+        row.innerHTML = `
+            <button type="button" class="btn-delete-row">&times; Remove Job</button>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem;">
+                <input type="text" class="exp-title" placeholder="Job Title (e.g. Software Engineer)" value="${title}" style="background: var(--bg-base); box-shadow: var(--shadow-out-sm); border: none; border-radius: 8px; padding: 0.5rem; color: var(--text-primary); font-family: var(--font-body); font-size: 12px; outline: none;">
+                <input type="text" class="exp-company" placeholder="Company Name" value="${company}" style="background: var(--bg-base); box-shadow: var(--shadow-out-sm); border: none; border-radius: 8px; padding: 0.5rem; color: var(--text-primary); font-family: var(--font-body); font-size: 12px; outline: none;">
+            </div>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem;">
+                <input type="text" class="exp-dates" placeholder="Dates (e.g. Jan 2022 - Present)" value="${dates}" style="background: var(--bg-base); box-shadow: var(--shadow-out-sm); border: none; border-radius: 8px; padding: 0.5rem; color: var(--text-primary); font-family: var(--font-body); font-size: 12px; outline: none;">
+                <input type="text" class="exp-location" placeholder="Location" value="${location}" style="background: var(--bg-base); box-shadow: var(--shadow-out-sm); border: none; border-radius: 8px; padding: 0.5rem; color: var(--text-primary); font-family: var(--font-body); font-size: 12px; outline: none;">
+            </div>
+            <textarea class="exp-desc" placeholder="Responsibilities & Accomplishments (one per line, e.g. - Developed REST APIs)" style="width: 100%; height: 60px; background: var(--bg-base); box-shadow: var(--shadow-out-sm); border: none; border-radius: 8px; padding: 0.5rem; color: var(--text-primary); font-family: var(--font-body); font-size: 12px; outline: none; resize: none;">${desc}</textarea>
+        `;
+        
+        row.querySelector('.btn-delete-row').addEventListener('click', () => {
+            row.remove();
+            showToast("Removed job entry", "success");
+        });
+        
+        experienceContainer.appendChild(row);
+    }
+
+    btnAddExperience.addEventListener('click', () => createExperienceRow());
+
+    // Add education block
+    function createEducationRow(degree = '', school = '', dates = '', location = '') {
+        const row = document.createElement('div');
+        row.className = 'builder-item-row';
+        row.innerHTML = `
+            <button type="button" class="btn-delete-row">&times; Remove School</button>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem;">
+                <input type="text" class="edu-degree" placeholder="Degree / Program (e.g. BS in CS)" value="${degree}" style="background: var(--bg-base); box-shadow: var(--shadow-out-sm); border: none; border-radius: 8px; padding: 0.5rem; color: var(--text-primary); font-family: var(--font-body); font-size: 12px; outline: none;">
+                <input type="text" class="edu-school" placeholder="School / University" value="${school}" style="background: var(--bg-base); box-shadow: var(--shadow-out-sm); border: none; border-radius: 8px; padding: 0.5rem; color: var(--text-primary); font-family: var(--font-body); font-size: 12px; outline: none;">
+            </div>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem;">
+                <input type="text" class="edu-dates" placeholder="Graduation Year / Dates" value="${dates}" style="background: var(--bg-base); box-shadow: var(--shadow-out-sm); border: none; border-radius: 8px; padding: 0.5rem; color: var(--text-primary); font-family: var(--font-body); font-size: 12px; outline: none;">
+                <input type="text" class="edu-location" placeholder="Location" value="${location}" style="background: var(--bg-base); box-shadow: var(--shadow-out-sm); border: none; border-radius: 8px; padding: 0.5rem; color: var(--text-primary); font-family: var(--font-body); font-size: 12px; outline: none;">
+            </div>
+        `;
+        
+        row.querySelector('.btn-delete-row').addEventListener('click', () => {
+            row.remove();
+            showToast("Removed education entry", "success");
+        });
+        
+        educationContainer.appendChild(row);
+    }
+
+    btnAddEducation.addEventListener('click', () => createEducationRow());
+
+    // Get structured form data object
+    function getBuilderData() {
+        const nameVal = builderName.value.trim();
+        if (!nameVal) {
+            showToast("Please provide your Full Name.", "error");
+            return null;
+        }
+        
+        const experience = [];
+        const expRows = experienceContainer.querySelectorAll('.builder-item-row');
+        expRows.forEach(row => {
+            experience.push({
+                title: row.querySelector('.exp-title').value.trim(),
+                company: row.querySelector('.exp-company').value.trim(),
+                dates: row.querySelector('.exp-dates').value.trim(),
+                location: row.querySelector('.exp-location').value.trim(),
+                description: row.querySelector('.exp-desc').value.trim()
+            });
+        });
+
+        const education = [];
+        const eduRows = educationContainer.querySelectorAll('.builder-item-row');
+        eduRows.forEach(row => {
+            education.push({
+                degree: row.querySelector('.edu-degree').value.trim(),
+                school: row.querySelector('.edu-school').value.trim(),
+                dates: row.querySelector('.edu-dates').value.trim(),
+                location: row.querySelector('.edu-location').value.trim()
+            });
+        });
+
+        return {
+            name: nameVal,
+            email: builderEmail.value.trim(),
+            phone: builderPhone.value.trim(),
+            location: builderLocation.value.trim(),
+            linkedin: builderLinkedin.value.trim(),
+            summary: builderSummary.value.trim(),
+            skills: builderSkills.value.trim(),
+            experience: experience,
+            education: education
+        };
+    }
+
+    // Call API and trigger browser download
+    async function downloadGeneratedResume(format = 'pdf') {
+        const resumeData = getBuilderData();
+        if (!resumeData) return;
+        
+        const endpoint = format === 'pdf' ? '/api/generate-resume-pdf' : '/api/generate-resume-docx';
+        
+        showToast(`Compiling ATS ${format.toUpperCase()}...`, 'success');
+        
+        try {
+            const res = await fetch(endpoint, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(resumeData)
+            });
+            
+            if (!res.ok) throw new Error("Failed to compile document.");
+            
+            const blob = await res.blob();
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `${resumeData.name.replace(/\s+/g, '_')}_ATS_Resume.${format}`;
+            document.body.appendChild(a);
+            a.click();
+            a.remove();
+            window.URL.revokeObjectURL(url);
+            showToast(`Downloaded ATS ${format.toUpperCase()} successfully!`, 'success');
+        } catch (err) {
+            showToast("Failed to compile resume: " + err.message, 'error');
+            console.error(err);
+        }
+    }
+
+    btnGeneratePDF.addEventListener('click', () => downloadGeneratedResume('pdf'));
+    btnGenerateDOCX.addEventListener('click', () => downloadGeneratedResume('docx'));
+
+    // Demo data loader
+    btnLoadSampleBuilder.addEventListener('click', () => {
+        builderReset();
+        
+        builderName.value = "Alex Chen";
+        builderEmail.value = "alex.chen@email.com";
+        builderPhone.value = "+1 (555) 019-2834";
+        builderLocation.value = "San Francisco, CA";
+        builderLinkedin.value = "linkedin.com/in/alexchen";
+        builderSummary.value = "Results-driven Software Engineer with 5+ years of experience designing and optimizing scalable backend REST APIs and microservices architectures. Expert in Python, FastAPI, and containerization pipelines.";
+        builderSkills.value = "Python, FastAPI, PostgreSQL, Docker, Kubernetes, Git, React, REST APIs, AWS, System Design, Microservices";
+        
+        createExperienceRow(
+            "Senior Backend Engineer",
+            "TechCorp",
+            "2022 - Present",
+            "Remote",
+            "- Designed and built microservices using Python and FastAPI\n- Optimized PostgreSQL query times by 40% using indexes and profiling\n- Implemented Docker containerization and Kubernetes orchestration workflows"
+        );
+        
+        createExperienceRow(
+            "Software Developer",
+            "AppStart",
+            "2020 - 2022",
+            "San Francisco, CA",
+            "- Developed REST APIs using Flask and worked on frontend modules in React\n- Managed database migrations and maintained Git collaborative structures"
+        );
+
+        createEducationRow(
+            "Bachelor of Science in Computer Science",
+            "Stanford University",
+            "2020",
+            "Stanford, CA"
+        );
+        
+        showToast("Demo profile loaded", "success");
+    });
+
+    function builderReset() {
+        builderName.value = '';
+        builderEmail.value = '';
+        builderPhone.value = '';
+        builderLocation.value = '';
+        builderLinkedin.value = '';
+        builderSummary.value = '';
+        builderSkills.value = '';
+        experienceContainer.innerHTML = '';
+        educationContainer.innerHTML = '';
+    }
+
+    btnResetBuilder.addEventListener('click', () => {
+        builderReset();
+        showToast("Builder form cleared", "success");
+    });
+
     // Initialize App
     checkApiConfig();
     loadSampleJDs();
