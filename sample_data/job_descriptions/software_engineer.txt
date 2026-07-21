@@ -1,0 +1,8 @@
+Job Title: Senior Software Engineer (Python)
+Location: Remote / Hybrid
+Experience: 4+ years
+Required Skills: Python, FastAPI, PostgreSQL, Docker, Git, REST APIs, System Design.
+Preferred Skills: AWS, React, Kubernetes, CI/CD.
+Education: Bachelor's degree in Computer Science, Engineering, or related field.
+Role Description:
+We are looking for a Senior Software Engineer to build and maintain high-performance, scalable backend services. You will design APIs, optimize database queries, containerize services using Docker, and collaborate with frontend teams. You should have strong experience with Python and FastAPI, database design, and cloud deployments.

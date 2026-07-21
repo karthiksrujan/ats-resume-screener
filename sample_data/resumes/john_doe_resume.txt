@@ -1,0 +1,14 @@
+=========================================
+CANDIDATE: John Doe
+Email: johndoe@email.com | Phone: +1 (555) 044-8392
+=========================================
+
+EDUCATION:
+High School Diploma
+
+WORK EXPERIENCE:
+6 months of frontend experience.
+- Intern Frontend Developer at Pixels Co (2025 - Present): Created landing pages using HTML, CSS, and basic JavaScript. Fixed UI layout alignment issues.
+
+TECHNICAL SKILLS:
+HTML, CSS, JavaScript, Web Design

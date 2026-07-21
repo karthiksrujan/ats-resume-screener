@@ -1,0 +1,15 @@
+=========================================
+CANDIDATE: Alex Chen
+Email: alex.chen@email.com | Phone: +1 (555) 019-2834
+=========================================
+
+EDUCATION:
+BS in Computer Science, Stanford University (2020)
+
+WORK EXPERIENCE:
+5 years of software engineering experience.
+- Senior Backend Engineer at TechCorp (2022 - Present): Designed and built microservices using Python and FastAPI. Optimized PostgreSQL query times by 40%. Implemented Docker containerization and Kubernetes orchestration.
+- Software Developer at AppStart (2020 - 2022): Developed REST APIs using Flask and worked on frontend integrations using React. Maintained Git workflows.
+
+TECHNICAL SKILLS:
+Python, FastAPI, PostgreSQL, Docker, Kubernetes, Git, React, REST APIs, AWS, System Design

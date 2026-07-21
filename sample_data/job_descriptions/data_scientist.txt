@@ -1,0 +1,8 @@
+Job Title: Data Scientist
+Location: San Francisco, CA / Hybrid
+Experience: 3+ years
+Required Skills: Python, Machine Learning, SQL, PyTorch/TensorFlow, Pandas/NumPy, Data Visualization.
+Preferred Skills: Big Data (Spark), Cloud (GCP/AWS), LLMs/Prompt Engineering, PhD.
+Education: Master's or PhD in Statistics, Computer Science, Mathematics, or a quantitative field.
+Role Description:
+We are seeking a Data Scientist to build predictive models, run statistical analyses, and integrate machine learning features into our product suite. You will analyze large datasets, design and train deep learning models, and work with product teams to translate model outputs into business value.

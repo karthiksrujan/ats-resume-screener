@@ -1,0 +1,9 @@
+venv/
+__pycache__/
+*.pyc
+.env
+uploads/
+shortlist.csv
+*.log
+.system_generated/
+.DS_Store

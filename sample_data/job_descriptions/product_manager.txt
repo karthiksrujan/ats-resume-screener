@@ -1,0 +1,8 @@
+Job Title: Product Manager
+Location: New York, NY / Hybrid
+Experience: 3+ years
+Required Skills: Product Strategy, Agile/Scrum, SQL, User Research, Product Roadmap, Market Analysis.
+Preferred Skills: Jira, A/B Testing, Data Analytics (Tableau/Mixpanel), Technical Background.
+Education: Bachelor's degree in Business, Computer Science, or related; MBA is a plus.
+Role Description:
+We are looking for a Product Manager to lead the development of our customer-facing platform. You will work closely with engineering, design, and marketing to define product requirements, build roadmaps, analyze user data, and run Scrum meetings. A data-driven approach and excellent communication skills are required.

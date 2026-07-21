@@ -1,0 +1,15 @@
+=========================================
+CANDIDATE: Elena Rostova
+Email: elena.r@email.com | Phone: +1 (555) 025-9201
+=========================================
+
+EDUCATION:
+MS in Computer Science, Georgia Tech (2023)
+
+WORK EXPERIENCE:
+2 years of experience.
+- Data Scientist at LogisticsCorp (2023 - Present): Built predictive algorithms for shipping delays using Python, Pandas, and Scikit-Learn. Optimized SQL queries on warehouse databases.
+- Graduate Research Assistant at Georgia Tech (2022 - 2023): Analyzed spatial datasets and built regression models.
+
+TECHNICAL SKILLS:
+Python, Machine Learning, SQL, Pandas, Scikit-Learn, Tableau, Data Analytics

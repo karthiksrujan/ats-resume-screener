@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rooman AI — Resume Screening Agent</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/static/style.css">
+    <script defer src="/static/app.js"></script>
+</head>
+<body>
+    <script>
+        window.onerror = function(message, source, lineno, colno, error) {
+            const debugDiv = document.createElement('div');
+            debugDiv.style.position = 'fixed';
+            debugDiv.style.top = '10px';
+            debugDiv.style.left = '10px';
+            debugDiv.style.background = '#fee2e2';
+            debugDiv.style.color = '#991b1b';
+            debugDiv.style.padding = '15px';
+            debugDiv.style.border = '2px solid #f87171';
+            debugDiv.style.borderRadius = '8px';
+            debugDiv.style.zIndex = '99999';
+            debugDiv.style.maxWidth = '90%';
+            debugDiv.style.fontSize = '12px';
+            debugDiv.style.fontFamily = 'monospace';
+            debugDiv.style.whiteSpace = 'pre-wrap';
+            debugDiv.innerHTML = '<strong>JS Error:</strong> ' + message + '\nLine: ' + lineno + '\nSource: ' + source;
+            document.body.appendChild(debugDiv);
+            return false;
+        };
+    </script>
+    <!-- Ambient Background Glows -->
+    <div class="bg-glow bg-glow-1"></div>
+    <div class="bg-glow bg-glow-2"></div>
+
+    <div class="app-container">
+        <!-- Header -->
+        <header class="app-header">
+            <div class="header-logo">
+                <div class="logo-icon">R</div>
+                <div class="logo-text">
+                    <h1>Rooman AI</h1>
+                    <span>Cognitive Recruitment Agent</span>
+                </div>
+            </div>
+            <div class="header-status">
+                <div class="status-indicator" id="apiStatusIndicator"></div>
+                <span id="apiStatusText">Connecting to backend...</span>
+            </div>
+        </header>
+
+        <!-- Main Workspace -->
+        <main class="workspace">
+            <!-- Sidebar: JD Panel -->
+            <section class="panel jd-panel">
+                <div class="panel-header">
+                    <h2>Job Description</h2>
+                    <p>Provide the target job requirements</p>
+                </div>
+                
+                <div class="jd-templates">
+                    <label>Quick Templates:</label>
+                    <div class="template-buttons" id="templateButtons">
+                        <button type="button" class="btn-template skeleton" data-jd="software_engineer">Software Engineer</button>
+                        <button type="button" class="btn-template skeleton" data-jd="data_scientist">Data Scientist</button>
+                        <button type="button" class="btn-template skeleton" data-jd="product_manager">Product Manager</button>
+                    </div>
+                </div>
+
+                <div class="editor-container">
+                    <textarea id="jdInput" placeholder="Paste your Job Description here... (Include required skills, experience, and educational qualifications)"></textarea>
+                </div>
+            </section>
+
+            <!-- Main Content Area -->
+            <section class="main-content">
+                <!-- Dropzone Section -->
+                <div class="panel upload-panel">
+                    <div class="panel-header">
+                        <h2>Upload Resumes</h2>
+                        <p>Supports PDF, DOCX, and TXT files (Upload 10+ resumes to screen at once)</p>
+                    </div>
+                    
+                    <input type="file" id="fileInput" multiple accept=".pdf,.docx,.txt" style="display: none;">
+                    <div class="dropzone" id="dropzone">
+                        <div class="dropzone-content">
+                            <svg class="upload-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M12 16.5V9.75m0 0l3 3m-3-3l-3 3M6.75 19.5a4.5 4.5 0 01-1.41-8.775 5.25 5.25 0 0110.233-2.33 3 3 0 013.758 3.848A3.752 3.752 0 0118 19.5H6.75z" />
+                            </svg>
+                            <h3>Drag & drop resumes here</h3>
+                            <p>or <span class="browse-link">browse files</span> from your computer</p>
+                        </div>
+                    </div>
+                    
+                    <!-- File Queue List -->
+                    <div class="file-queue" id="fileQueue" style="display: none;">
+                        <div class="queue-header">
+                            <h4>Selected Files (<span id="queueCount">0</span>)</h4>
+                            <button type="button" class="btn-clear" id="btnClearQueue">Clear All</button>
+                        </div>
+                        <div class="queue-list" id="queueList"></div>
+                        <div class="action-bar">
+                            <button type="button" class="btn-primary" id="btnScreen">
+                                <span>Run Screen Pipeline</span>
+                                <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M13 5l7 7-7 7M5 5l7 7-7 7" />
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Live Logs / Loader (Hidden by default) -->
+                <div class="panel status-panel" id="statusPanel" style="display: none;">
+                    <div class="spinner-container">
+                        <div class="custom-spinner"></div>
+                        <div class="status-log">
+                            <h3 id="statusTitle">Screening Candidates...</h3>
+                            <p id="statusSubtitle">Analyzing resumes with Gemini cognitive engine.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Dashboard Results (Hidden by default until run completed) -->
+                <div class="panel dashboard-panel" id="dashboardPanel" style="display: none;">
+                    <div class="dashboard-header">
+                        <div>
+                            <h2>Screening Results</h2>
+                            <p>Ranked candidates based on job description suitability</p>
+                        </div>
+                        <div class="export-actions">
+                            <button type="button" class="btn-secondary" id="btnExportCSV">Export CSV</button>
+                            <button type="button" class="btn-secondary" id="btnExportJSON">Export JSON</button>
+                        </div>
+                    </div>
+
+                    <!-- Fit Filters -->
+                    <div class="fit-filters">
+                        <button type="button" class="btn-filter active" data-filter="all">All <span class="filter-count" id="countAll">0</span></button>
+                        <button type="button" class="btn-filter" data-filter="Highly Recommended">Highly Recommended <span class="filter-count" id="countHighly">0</span></button>
+                        <button type="button" class="btn-filter" data-filter="Good Fit">Good Fit <span class="filter-count" id="countGood">0</span></button>
+                        <button type="button" class="btn-filter" data-filter="Borderline">Borderline <span class="filter-count" id="countBorderline">0</span></button>
+                        <button type="button" class="btn-filter" data-filter="Not Recommended">Not Recommended <span class="filter-count" id="countNotRec">0</span></button>
+                    </div>
+
+                    <!-- Candidates List -->
+                    <div class="candidates-list" id="candidatesList"></div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Candidate Detailed Slide-Out Drawer -->
+    <div class="drawer-overlay" id="drawerOverlay"></div>
+    <div class="drawer" id="candidateDrawer">
+        <button class="drawer-close" id="btnCloseDrawer">&times;</button>
+        <div class="drawer-content" id="drawerContent">
+            <!-- Dynamically populated candidate profile -->
+        </div>
+    </div>
+
+    <!-- Toast Notification Container -->
+    <div class="toast-container" id="toastContainer"></div>
+</body>
+</html>
