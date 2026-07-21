@@ -319,3 +319,76 @@ def generate_ats_docx(data: dict) -> Path:
         
     doc.save(docx_path)
     return docx_path
+
+def generate_cover_letter_pdf(data: dict) -> Path:
+    """
+    Generates a beautifully typeset professional PDF cover letter.
+    """
+    name = data.get("name", "Candidate")
+    email = data.get("email", "N/A")
+    phone = data.get("phone", "N/A")
+    letter_text = data.get("text", "")
+    
+    safe_name = clean_filename(name)
+    pdf_path = UPLOAD_DIR / f"{safe_name}_Cover_Letter.pdf"
+    
+    doc = SimpleDocTemplate(
+        str(pdf_path),
+        pagesize=letter,
+        leftMargin=54,
+        rightMargin=54,
+        topMargin=54,
+        bottomMargin=54
+    )
+    
+    styles = getSampleStyleSheet()
+    text_color = HexColor("#1e293b")
+    
+    name_style = ParagraphStyle(
+        'CL_Name',
+        parent=styles['Normal'],
+        fontName='Helvetica-Bold',
+        fontSize=18,
+        leading=22,
+        textColor=text_color,
+        spaceAfter=4
+    )
+    
+    contact_style = ParagraphStyle(
+        'CL_Contact',
+        parent=styles['Normal'],
+        fontName='Helvetica',
+        fontSize=9.5,
+        leading=13,
+        textColor=HexColor("#475569"),
+        spaceAfter=15
+    )
+    
+    body_style = ParagraphStyle(
+        'CL_Body',
+        parent=styles['Normal'],
+        fontName='Helvetica',
+        fontSize=10,
+        leading=14,
+        textColor=text_color,
+        spaceAfter=12
+    )
+    
+    story = []
+    
+    # Header block
+    story.append(Paragraph(name, name_style))
+    contact_info = f"Email: {email} | Phone: {phone}"
+    story.append(Paragraph(contact_info, contact_style))
+    story.append(HRFlowable(width="100%", thickness=1, color=HexColor("#cbd5e1"), spaceBefore=0, spaceAfter=20))
+    
+    # Body text
+    # Split text into paragraphs by double-newline
+    paragraphs = [p.strip() for p in letter_text.split('\n\n') if p.strip()]
+    for p_text in paragraphs:
+        # Format single newlines into spaces, keeping spacing clean
+        clean_p_text = " ".join(p_text.split('\n'))
+        story.append(Paragraph(clean_p_text, body_style))
+        
+    doc.build(story)
+    return pdf_path

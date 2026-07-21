@@ -216,6 +216,8 @@ def fallback_parser_extractor(resume_text: str, jd_text: str) -> Dict[str, Any]:
         "candidate_email": candidate_email,
         "candidate_phone": candidate_phone,
         "skills_extracted": extracted_skills[:12],
+        "matched_keywords": matched_skills,
+        "missing_keywords": missing_skills,
         "experience_years": years,
         "education_extracted": education or "Not Specified",
         "scores": scores,
@@ -250,6 +252,8 @@ Your JSON object must strictly match this structure:
   "candidate_email": "Email address (default: 'N/A')",
   "candidate_phone": "Phone number (default: 'N/A')",
   "skills_extracted": ["List", "of", "top", "skills", "found"],
+  "matched_keywords": ["list", "of", "skills", "matching", "the", "JD"],
+  "missing_keywords": ["list", "of", "essential", "skills", "missing", "from", "the", "JD"],
   "experience_years": 4.5, // Estimated years of relevant experience as a float
   "education_extracted": "Highest degree and school",
   "scores": {{
@@ -283,6 +287,14 @@ Your JSON object must strictly match this structure:
     try:
         data = json.loads(response_text)
         data["mode"] = "Cognitive LLM Mode (Gemini)"
+        
+        # Ensure matched and missing keywords exist
+        if "matched_keywords" not in data or "missing_keywords" not in data:
+            extracted = [s.lower() for s in data.get("skills_extracted", [])]
+            jd_skills = [s.lower() for s in COMMON_SKILLS if re.search(r'\b' + re.escape(s) + r'\b', jd_text.lower())]
+            data["matched_keywords"] = [s.title() for s in extracted if s in jd_skills]
+            data["missing_keywords"] = [s.title() for s in jd_skills if s not in extracted]
+            
         return data
     except Exception as e:
         # Fallback to local regex/TF-IDF parser if JSON parsing fails

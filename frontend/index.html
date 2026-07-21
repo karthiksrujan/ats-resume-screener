@@ -49,6 +49,7 @@
             <div class="header-nav">
                 <button type="button" class="btn-nav active" id="tabScreener">Resume Screener</button>
                 <button type="button" class="btn-nav" id="tabGenerator">ATS Resume Builder</button>
+                <button type="button" class="btn-nav" id="tabCRM">Saved Candidates</button>
             </div>
             <div class="header-status">
                 <div class="status-indicator" id="apiStatusIndicator"></div>
@@ -246,6 +247,57 @@
                         <button type="button" class="btn-template" id="btnLoadSampleBuilder" style="padding: 0.75rem;">Load Demo Data</button>
                         <button type="button" class="btn-template" id="btnResetBuilder" style="padding: 0.75rem; color: var(--tier-notrec);">Reset Form</button>
                     </div>
+                </div>
+
+                <!-- Cover Letter Builder Section -->
+                <div class="panel-header" style="margin-top: 1.5rem; border-top: 1px solid rgba(0,0,0,0.05); padding-top: 1.5rem;">
+                    <h2>AI Cover Letter Builder</h2>
+                    <p>Draft a tailored cover letter based on this profile</p>
+                </div>
+                <div style="display: flex; flex-direction: column; gap: 0.75rem;">
+                    <textarea id="clTargetJD" placeholder="Paste the target Job Description here to customize the cover letter..." style="width: 100%; height: 75px; background: var(--bg-base); box-shadow: var(--shadow-in); border: none; border-radius: 12px; padding: 0.75rem 1rem; color: var(--text-primary); font-family: var(--font-body); font-size: 13px; outline: none; resize: none;"></textarea>
+                    <button type="button" class="btn-secondary" id="btnGenerateCL" style="width: 100%; justify-content: center; padding: 0.75rem; box-shadow: var(--shadow-out);">
+                        <span>Generate Cover Letter</span>
+                    </button>
+                    <div id="clResultContainer" style="display: none; flex-direction: column; gap: 0.75rem; margin-top: 0.5rem;">
+                        <textarea id="clResultText" style="width: 100%; height: 160px; background: var(--bg-base); box-shadow: var(--shadow-in); border: none; border-radius: 12px; padding: 0.75rem 1rem; color: var(--text-primary); font-family: var(--font-body); font-size: 12px; outline: none; resize: vertical; line-height: 1.4;"></textarea>
+                        <button type="button" class="btn-primary" id="btnDownloadCLPDF" style="width: 100%; justify-content: center; padding: 0.75rem;">
+                            <span>Download PDF Cover Letter</span>
+                        </button>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <!-- Saved Candidates CRM Workspace -->
+        <main class="workspace" id="crmWorkspace" style="display: none;">
+            <section class="panel" style="grid-column: span 2; max-height: calc(100vh - 8rem); overflow-y: auto;">
+                <div class="panel-header" style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(0,0,0,0.05); padding-bottom: 1rem; margin-bottom: 1rem;">
+                    <div>
+                        <h2>Saved Candidates (CRM Tracker)</h2>
+                        <p>Track your saved candidates, update recruitment status, and draft emails</p>
+                    </div>
+                    <button type="button" class="btn-template" id="btnRefreshCRM" style="padding: 0.5rem 1rem;">Refresh Table</button>
+                </div>
+                <div class="crm-table-container" style="overflow-x: auto; background: var(--bg-base); border-radius: 20px; box-shadow: var(--shadow-in); padding: 1rem;">
+                    <table class="crm-table" style="width: 100%; border-collapse: collapse; text-align: left; font-size: 13px;">
+                        <thead>
+                            <tr style="border-bottom: 2px solid rgba(0,0,0,0.05); color: var(--text-muted);">
+                                <th style="padding: 0.75rem 1rem;">Name</th>
+                                <th style="padding: 0.75rem 1rem;">Email</th>
+                                <th style="padding: 0.75rem 1rem;">Phone</th>
+                                <th style="padding: 0.75rem 1rem;">Score</th>
+                                <th style="padding: 0.75rem 1rem;">Fit Tier</th>
+                                <th style="padding: 0.75rem 1rem;">Recruitment Status</th>
+                                <th style="padding: 0.75rem 1rem; text-align: right;">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="crmTableBody">
+                            <tr>
+                                <td colspan="7" style="padding: 2rem; text-align: center; color: var(--text-muted);">No candidates saved yet. Screen resumes and save them to your tracker!</td>
+                            </tr>
+                        </tbody>
+                    </table>
                 </div>
             </section>
         </main>

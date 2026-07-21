@@ -1113,3 +1113,71 @@ h1, h2, h3, h4, h5 {
     width: 100% !important;
 }
 
+/* CRM Table Styles */
+.crm-table th {
+    font-weight: 700;
+    text-transform: uppercase;
+    font-size: 11px;
+    letter-spacing: 0.05em;
+    padding: 1rem;
+    border-bottom: 2px solid rgba(0,0,0,0.05);
+}
+
+.crm-table td {
+    padding: 1rem;
+    border-bottom: 1px solid rgba(0,0,0,0.05);
+    color: var(--text-primary);
+}
+
+.crm-table tr:hover td {
+    background: rgba(0,0,0,0.01);
+}
+
+/* CRM Select dropdown status overrides */
+.crm-status-select {
+    background: var(--bg-base);
+    border: none;
+    outline: none;
+    border-radius: 8px;
+    padding: 0.4rem 0.8rem;
+    font-family: var(--font-body);
+    font-size: 12px;
+    color: var(--text-primary);
+    box-shadow: var(--shadow-out-sm);
+    cursor: pointer;
+    font-weight: 600;
+    transition: var(--transition-smooth);
+}
+
+.crm-status-select:focus {
+    box-shadow: var(--shadow-in-sm);
+}
+
+/* Keyword matching badges */
+.keyword-badge-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    margin-top: 0.5rem;
+}
+
+.keyword-badge {
+    font-size: 11px;
+    font-weight: 600;
+    padding: 0.25rem 0.6rem;
+    border-radius: 20px;
+    display: inline-flex;
+    align-items: center;
+    box-shadow: var(--shadow-out-sm);
+}
+
+.keyword-badge.matched {
+    background: rgba(34, 197, 94, 0.1);
+    color: var(--tier-hire);
+}
+
+.keyword-badge.missing {
+    background: rgba(239, 68, 68, 0.1);
+    color: var(--tier-notrec);
+}
+

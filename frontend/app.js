@@ -461,6 +461,10 @@ document.addEventListener('DOMContentLoaded', () => {
         // Extract skills pills
         const skillsPillsHtml = cand.skills_extracted.map(s => `<span class="profile-pill">${s}</span>`).join('');
 
+        // Extract matched and missing keyword badges
+        const matchedBadges = (cand.matched_keywords || []).map(s => `<span class="keyword-badge matched">✓ ${s}</span>`).join('');
+        const missingBadges = (cand.missing_keywords || []).map(s => `<span class="keyword-badge missing">✗ ${s}</span>`).join('');
+
         drawerContent.innerHTML = `
             <div class="profile-header">
                 <div class="profile-title">
@@ -481,6 +485,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     <div class="score-value" style="font-size:28px;">${cand.scores.total_score}%</div>
                     <div class="score-lbl" style="font-size:11px;">Suite Score</div>
                     <div style="font-size: 10px; color: var(--text-muted); margin-top: 0.25rem;">Via ${cand.mode}</div>
+                    <button type="button" class="btn-template" id="btnSaveToCRM" style="margin-top:0.75rem; padding:0.35rem 0.75rem; font-size:11px; display:inline-block; color:var(--primary); font-weight:700;">Save to Tracker</button>
                 </div>
             </div>
 
@@ -525,11 +530,17 @@ document.addEventListener('DOMContentLoaded', () => {
                 <p class="profile-text">${cand.justification}</p>
             </div>
 
-            <!-- Extracted Skills -->
+            <!-- Extracted Skills & Keyword Matching -->
             <div class="profile-section">
                 <h4>Extracted Keywords & Skills</h4>
-                <div class="profile-pills">
+                <div class="profile-pills" style="margin-bottom:0.75rem;">
                     ${skillsPillsHtml}
+                </div>
+                
+                <h5 style="font-size: 11px; text-transform: uppercase; color: var(--text-muted); margin-bottom: 0.4rem; margin-top:0.8rem;">Keyword Matching Analysis</h5>
+                <div class="keyword-badge-container">
+                    ${matchedBadges || '<span style="font-size:11px; color:var(--text-muted);">No direct keyword matches.</span>'}
+                    ${missingBadges}
                 </div>
             </div>
 
@@ -555,14 +566,35 @@ document.addEventListener('DOMContentLoaded', () => {
                 </div>
             </div>
 
-            <!-- Interview Questions -->
+            <!-- Suggested Interview Questions -->
             <div class="profile-section">
                 <h4>Suggested Interview Questions</h4>
                 <ul class="bullet-list questions-list">
                     ${questionsHtml}
                 </ul>
             </div>
+
+            <!-- Recruitment Communication Actions -->
+            <div class="profile-section" style="border-top:1px solid rgba(0,0,0,0.05); padding-top:1.5rem; display:flex; gap:1rem;">
+                <button type="button" class="btn-primary" id="btnInviteMail" style="flex:1; justify-content:center; padding:0.6rem;">Invite Candidate</button>
+                <button type="button" class="btn-secondary" id="btnRejectMail" style="flex:1; justify-content:center; padding:0.6rem; color:var(--tier-notrec);">Send Rejection</button>
+            </div>
         `;
+
+        // Setup save handler
+        document.getElementById('btnSaveToCRM').addEventListener('click', () => {
+            saveCandidateToCRM(cand);
+        });
+
+        // Setup Invite mail handler
+        document.getElementById('btnInviteMail').addEventListener('click', () => {
+            sendCandidateEmail(cand.candidate_name, cand.candidate_email, 'invite', cand.scores.total_score);
+        });
+
+        // Setup Reject mail handler
+        document.getElementById('btnRejectMail').addEventListener('click', () => {
+            sendCandidateEmail(cand.candidate_name, cand.candidate_email, 'reject', cand.scores.total_score);
+        });
 
         // Animate score bars
         setTimeout(() => {
@@ -861,9 +893,367 @@ document.addEventListener('DOMContentLoaded', () => {
         educationContainer.innerHTML = '';
     }
 
-    btnResetBuilder.addEventListener('click', () => {
-        builderReset();
-        showToast("Builder form cleared", "success");
+    // Global functions for CRM actions and Email drafting
+    window.saveCandidateToCRM = function(cand) {
+        fetch('/api/db/candidates', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                name: cand.candidate_name,
+                email: cand.candidate_email,
+                phone: cand.candidate_phone,
+                score: cand.scores.total_score,
+                fit_tier: cand.tier,
+                strengths: cand.strengths,
+                gaps: cand.gaps,
+                status: 'Screened'
+            })
+        })
+        .then(res => res.json())
+        .then(data => {
+            if (data.success) {
+                showToast(`Successfully saved ${cand.candidate_name} to CRM Database!`, "success");
+            } else {
+                showToast(`Failed to save to database: ${data.error}`, "error");
+            }
+        })
+        .catch(err => {
+            showToast("Database connection failed. Verify your MySQL server is running.", "error");
+            console.error("DB Error:", err);
+        });
+    };
+
+    window.sendCandidateEmail = function(name, email, action, score) {
+        if (!email || email === 'N/A') {
+            showToast("Candidate email is not available.", "error");
+            return;
+        }
+        
+        let subject = "";
+        let body = "";
+        
+        if (action === 'invite') {
+            subject = `Interview Invitation - Rooman AI recruitment`;
+            body = `Dear ${name},
+
+Thank you for your application. We reviewed your profile using our screening agent, and we are pleased to inform you that you have been shortlisted for an interview! (Match suitability score: ${score}%).
+
+We would like to invite you for a 30-minute technical interview next week. Please let us know your availability.
+
+Sincerely,
+Recruiting Team`;
+        } else {
+            subject = `Application Update - Rooman AI recruitment`;
+            body = `Dear ${name},
+
+Thank you for your interest in the position and for taking the time to share your profile.
+
+After careful review, we regret to inform you that we will not be moving forward with your application at this time. We will keep your resume on file for future opportunities.
+
+We wish you all the best in your career search.
+
+Sincerely,
+Recruiting Team`;
+        }
+        
+        const mailtoUrl = `mailto:${email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+        window.location.href = mailtoUrl;
+        showToast(`Drafted email for ${name}`, "success");
+    };
+
+    const tabCRM = document.getElementById('tabCRM');
+    const crmWorkspace = document.getElementById('crmWorkspace');
+    const crmTableBody = document.getElementById('crmTableBody');
+    const btnRefreshCRM = document.getElementById('btnRefreshCRM');
+
+    // Register Tab CRM listener
+    if (tabCRM) {
+        tabCRM.addEventListener('click', () => {
+            tabCRM.classList.add('active');
+            tabScreener.classList.remove('active');
+            tabGenerator.classList.remove('active');
+            crmWorkspace.style.display = 'grid';
+            screenerWorkspace.style.display = 'none';
+            generatorWorkspace.style.display = 'none';
+            loadCandidatesCRM();
+            showToast("Switched to Saved Candidates Database", "success");
+        });
+    }
+
+    if (btnRefreshCRM) {
+        btnRefreshCRM.addEventListener('click', () => {
+            loadCandidatesCRM();
+        });
+    }
+
+    function loadCandidatesCRM() {
+        crmTableBody.innerHTML = `<tr><td colspan="7" style="padding:2rem; text-align:center;">Loading candidates from MySQL...</td></tr>`;
+
+        fetch('/api/db/candidates')
+        .then(res => {
+            if (!res.ok) throw new Error("Database fetch error.");
+            return res.json();
+        })
+        .then(data => {
+            if (data.success && data.candidates && data.candidates.length > 0) {
+                crmTableBody.innerHTML = '';
+                data.candidates.forEach(cand => {
+                    const tr = document.createElement('tr');
+                    
+                    let tierClass = 'notrec';
+                    if (cand.fit_tier === 'Highly Recommended') tierClass = 'highly';
+                    else if (cand.fit_tier === 'Good Fit') tierClass = 'good';
+                    else if (cand.fit_tier === 'Borderline') tierClass = 'borderline';
+
+                    tr.innerHTML = `
+                        <td style="padding:1rem; font-weight:600;">${cand.name}</td>
+                        <td style="padding:1rem;">${cand.email}</td>
+                        <td style="padding:1rem;">${cand.phone}</td>
+                        <td style="padding:1rem; font-weight:700; color:var(--primary);">${cand.score}%</td>
+                        <td style="padding:1rem;"><span class="fit-badge ${tierClass}" style="font-size:10px; padding:0.2rem 0.5rem;">${cand.fit_tier}</span></td>
+                        <td style="padding:1rem;">
+                            <select class="crm-status-select" data-id="${cand.id}">
+                                <option value="Screened" ${cand.status === 'Screened' ? 'selected' : ''}>Screened</option>
+                                <option value="Interviewing" ${cand.status === 'Interviewing' ? 'selected' : ''}>Interviewing</option>
+                                <option value="Offered" ${cand.status === 'Offered' ? 'selected' : ''}>Offered</option>
+                                <option value="Rejected" ${cand.status === 'Rejected' ? 'selected' : ''}>Rejected</option>
+                            </select>
+                        </td>
+                        <td style="padding:1rem; text-align:right; display:flex; gap:0.5rem; justify-content:flex-end;">
+                            <button type="button" class="btn-template btn-invite" style="padding:0.3rem 0.6rem; font-size:11px;">Invite</button>
+                            <button type="button" class="btn-template btn-delete" style="padding:0.3rem 0.6rem; font-size:11px; color:var(--tier-notrec);">Delete</button>
+                        </td>
+                    `;
+
+                    // Handle status change
+                    tr.querySelector('.crm-status-select').addEventListener('change', (e) => {
+                        updateCandidateStatusCRM(cand.id, e.target.value);
+                    });
+
+                    // Handle Invite mail
+                    tr.querySelector('.btn-invite').addEventListener('click', () => {
+                        sendCandidateEmail(cand.name, cand.email, 'invite', cand.score);
+                    });
+
+                    // Handle Delete
+                    tr.querySelector('.btn-delete').addEventListener('click', () => {
+                        if (confirm(`Are you sure you want to delete ${cand.name} from the database?`)) {
+                            deleteCandidateCRM(cand.id);
+                        }
+                    });
+
+                    crmTableBody.appendChild(tr);
+                });
+            } else {
+                crmTableBody.innerHTML = `<tr><td colspan="7" style="padding:2rem; text-align:center; color:var(--text-muted);">No candidates saved yet. Screen resumes and save them to your tracker!</td></tr>`;
+            }
+        })
+        .catch(err => {
+            crmTableBody.innerHTML = `<tr><td colspan="7" style="padding:2rem; text-align:center; color:var(--tier-notrec); font-weight:600;">Failed to fetch database records. Make sure the database exists in phpMyAdmin!</td></tr>`;
+            console.error("DB Fetch Error:", err);
+        });
+    }
+
+    function updateCandidateStatusCRM(id, status) {
+        fetch('/api/db/candidates', {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ id: id, status: status })
+        })
+        .then(res => res.json())
+        .then(data => {
+            if (data.success) {
+                showToast("Recruitment status updated successfully!", "success");
+            } else {
+                showToast(`Update failed: ${data.error}`, "error");
+            }
+        })
+        .catch(err => {
+            showToast("Database update connection failed.", "error");
+            console.error("DB Update Error:", err);
+        });
+    }
+
+    function deleteCandidateCRM(id) {
+        fetch(`/api/db/candidates?id=${id}`, {
+            method: 'DELETE'
+        })
+        .then(res => res.json())
+        .then(data => {
+            if (data.success) {
+                showToast("Candidate deleted from tracker.", "success");
+                loadCandidatesCRM();
+            } else {
+                showToast(`Delete failed: ${data.error}`, "error");
+            }
+        })
+        .catch(err => {
+            showToast("Database delete connection failed.", "error");
+            console.error("DB Delete Error:", err);
+        });
+    }
+
+    // Cover Letter generation click handlers
+    const btnGenerateCL = document.getElementById('btnGenerateCL');
+    const clTargetJD = document.getElementById('clTargetJD');
+    const clResultContainer = document.getElementById('clResultContainer');
+    const clResultText = document.getElementById('clResultText');
+    const btnDownloadCLPDF = document.getElementById('btnDownloadCLPDF');
+
+    if (btnGenerateCL) {
+        btnGenerateCL.addEventListener('click', () => {
+            const name = builderName.value.trim();
+            const jd = clTargetJD.value.trim();
+            
+            if (!name) {
+                showToast("Please enter your name in the Personal Information section first.", "error");
+                return;
+            }
+            if (!jd) {
+                showToast("Please paste the target Job Description to generate a cover letter.", "error");
+                return;
+            }
+
+            // Gather qualifications summary from builder fields to assist the AI
+            let qualifications = "";
+            
+            // Experience details
+            const expRows = experienceContainer.querySelectorAll('.builder-item-row');
+            if (expRows.length > 0) {
+                qualifications += "\nWork Experience:\n";
+                expRows.forEach(row => {
+                    const title = row.querySelector('.exp-title').value;
+                    const company = row.querySelector('.exp-company').value;
+                    qualifications += `- ${title} at ${company}\n`;
+                });
+            }
+            
+            // Education details
+            const eduRows = educationContainer.querySelectorAll('.builder-item-row');
+            if (eduRows.length > 0) {
+                qualifications += "\nEducation:\n";
+                eduRows.forEach(row => {
+                    const degree = row.querySelector('.edu-degree').value;
+                    const school = row.querySelector('.edu-school').value;
+                    qualifications += `- ${degree} from ${school}\n`;
+                });
+            }
+
+            // Skills details
+            const skills = builderSkills.value.trim();
+            if (skills) {
+                qualifications += `\nTechnical Skills: ${skills}\n`;
+            }
+
+            showToast("Generating tailored cover letter...", "info");
+            btnGenerateCL.disabled = true;
+            btnGenerateCL.innerText = "Generating...";
+
+            fetch('/api/generate-cover-letter', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    candidate_name: name,
+                    jd: jd,
+                    resume_text: qualifications || "A passionate engineering candidate looking for growth."
+                })
+            })
+            .then(res => {
+                if (!res.ok) throw new Error("Server error.");
+                return res.json();
+            })
+            .then(data => {
+                if (data.success && data.cover_letter) {
+                    clResultText.value = data.cover_letter;
+                    clResultContainer.style.display = 'flex';
+                    showToast("Cover letter generated!", "success");
+                } else {
+                    showToast("Failed to generate cover letter.", "error");
+                }
+            })
+            .catch(err => {
+                showToast("Failed to connect to cover letter generator.", "error");
+                console.error(err);
+            })
+            .finally(() => {
+                btnGenerateCL.disabled = false;
+                btnGenerateCL.innerText = "Generate Cover Letter";
+            });
+        });
+    }
+
+    if (btnDownloadCLPDF) {
+        btnDownloadCLPDF.addEventListener('click', () => {
+            const name = builderName.value.trim();
+            const email = builderEmail.value.trim();
+            const phone = builderPhone.value.trim();
+            const text = clResultText.value.trim();
+
+            if (!text) {
+                showToast("No cover letter text to export.", "error");
+                return;
+            }
+
+            showToast("Compiling Cover Letter PDF...", "info");
+            
+            fetch('/api/generate-cover-letter-pdf', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    name: name,
+                    email: email,
+                    phone: phone,
+                    text: text
+                })
+            })
+            .then(res => {
+                if (!res.ok) throw new Error("Server compile error.");
+                return res.blob();
+            })
+            .then(blob => {
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `${name.replace(/\s+/g, '_')}_Cover_Letter.pdf`;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                showToast("Cover Letter PDF downloaded successfully!", "success");
+            })
+            .catch(err => {
+                showToast("Failed to generate PDF.", "error");
+                console.error(err);
+            });
+        });
+    }
+
+    // Update existing tab handlers to remove CRM tab active styling when toggling
+    tabScreener.addEventListener('click', () => {
+        tabScreener.classList.add('active');
+        tabGenerator.classList.remove('active');
+        if (tabCRM) tabCRM.classList.remove('active');
+        screenerWorkspace.style.display = 'grid';
+        generatorWorkspace.style.display = 'none';
+        if (crmWorkspace) crmWorkspace.style.display = 'none';
+        showToast("Switched to Candidate Screener", "success");
+    });
+
+    tabGenerator.addEventListener('click', () => {
+        tabGenerator.classList.add('active');
+        tabScreener.classList.remove('active');
+        if (tabCRM) tabCRM.classList.remove('active');
+        generatorWorkspace.style.display = 'grid';
+        screenerWorkspace.style.display = 'none';
+        if (crmWorkspace) crmWorkspace.style.display = 'none';
+        showToast("Switched to ATS Resume Builder", "success");
     });
 
     // Initialize App
