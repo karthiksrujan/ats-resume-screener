@@ -74,7 +74,56 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // 3. Load Sample JDs
+    // 3. Load Sample JDs and Custom Templates
+    let customTemplates = {};
+
+    function renderTemplateButton(name) {
+        const cleanKey = name.replace(/\s+/g, '_').toLowerCase();
+        let btn = templateButtons.querySelector(`[data-jd="${cleanKey}"]`);
+        if (!btn) {
+            btn = document.createElement('button');
+            btn.type = 'button';
+            btn.className = 'btn-template';
+            btn.dataset.jd = cleanKey;
+            btn.textContent = name;
+            btn.title = "Double click to delete this custom template";
+            
+            // Allow double-click to delete custom template
+            btn.addEventListener('dblclick', () => {
+                if (confirm(`Do you want to delete the custom template "${name}"?`)) {
+                    delete customTemplates[cleanKey];
+                    localStorage.setItem('custom_jds', JSON.stringify(customTemplates));
+                    btn.remove();
+                    showToast(`Deleted template "${name}"`, "success");
+                    // If deleted active template, revert to software_engineer
+                    if (btn.classList.contains('active')) {
+                        const defaultBtn = templateButtons.querySelector('[data-jd="software_engineer"]');
+                        if (defaultBtn) {
+                            defaultBtn.click();
+                        }
+                    }
+                }
+            });
+            
+            templateButtons.appendChild(btn);
+        }
+    }
+
+    function loadCustomTemplates() {
+        try {
+            const saved = localStorage.getItem('custom_jds');
+            if (saved) {
+                customTemplates = JSON.parse(saved);
+                Object.keys(customTemplates).forEach(key => {
+                    const name = key.split('_').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
+                    renderTemplateButton(name);
+                });
+            }
+        } catch (e) {
+            console.error("Failed to load custom templates from localStorage", e);
+        }
+    }
+
     async function loadSampleJDs() {
         try {
             const res = await fetch('/api/sample-jds');
@@ -86,6 +135,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 btn.classList.remove('skeleton');
             });
             
+            // Load custom templates from localStorage
+            loadCustomTemplates();
+            
             // Set first sample as active by default
             if (sampleJDs['software_engineer']) {
                 jdInput.value = sampleJDs['software_engineer'];
@@ -93,13 +145,14 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         } catch (err) {
             console.error("Failed to load sample JDs", err);
+            loadCustomTemplates();
         }
     }
 
     // Template Button Handlers
     templateButtons.addEventListener('click', (e) => {
         const btn = e.target.closest('.btn-template');
-        if (!btn) return;
+        if (!btn || btn.id === 'btnSaveCustomJD') return;
         
         templateButtons.querySelectorAll('.btn-template').forEach(b => b.classList.remove('active'));
         btn.classList.add('active');
@@ -108,6 +161,50 @@ document.addEventListener('DOMContentLoaded', () => {
         if (sampleJDs[jdKey]) {
             jdInput.value = sampleJDs[jdKey];
             showToast(`Loaded ${btn.textContent} template`, 'success');
+        } else if (customTemplates[jdKey]) {
+            jdInput.value = customTemplates[jdKey];
+            showToast(`Loaded "${btn.textContent}" template`, 'success');
+        }
+    });
+
+    // Save Current JD as Custom Template Handler
+    const btnSaveCustomJD = document.getElementById('btnSaveCustomJD');
+    btnSaveCustomJD.addEventListener('click', () => {
+        const text = jdInput.value.trim();
+        if (!text) {
+            showToast("Please enter or paste a Job Description first.", "error");
+            return;
+        }
+        
+        const name = prompt("Enter a name for this Quick Template:", "SOC Intern");
+        if (!name) return;
+        
+        const cleanName = name.trim();
+        if (!cleanName) {
+            showToast("Template name cannot be empty.", "error");
+            return;
+        }
+        
+        const jdKey = cleanName.replace(/\s+/g, '_').toLowerCase();
+        
+        if (['software_engineer', 'data_scientist', 'product_manager'].includes(jdKey)) {
+            showToast("Cannot overwrite default templates.", "error");
+            return;
+        }
+        
+        customTemplates[jdKey] = text;
+        
+        try {
+            localStorage.setItem('custom_jds', JSON.stringify(customTemplates));
+            renderTemplateButton(cleanName);
+            
+            templateButtons.querySelectorAll('.btn-template').forEach(b => b.classList.remove('active'));
+            const newBtn = templateButtons.querySelector(`[data-jd="${jdKey}"]`);
+            if (newBtn) newBtn.classList.add('active');
+            
+            showToast(`Saved template "${cleanName}"`, "success");
+        } catch (e) {
+            showToast("Failed to save template locally: " + e.message, "error");
         }
     });
 
