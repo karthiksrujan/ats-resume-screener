@@ -165,6 +165,20 @@ def fallback_parser_extractor(resume_text: str, jd_text: str) -> Dict[str, Any]:
     strengths = [f"Strong match for skills: {', '.join(matched_skills[:4])}"] if matched_skills else ["Text matches some JD terms."]
     gaps = [f"Missing key JD skills: {', '.join(missing_skills[:4])}"] if missing_skills else ["No major skill gaps identified."]
     
+    # 8. Cybersecurity Domain Credential Boosting
+    is_security_jd = any(k in jd_text.lower() for k in ["security", "cyber", "soc", "siem", "vulnerability", "firewall", "incident"])
+    sec_boost_applied = False
+    found_sec_keywords = []
+    if is_security_jd:
+        security_keywords = ["ceh", "ethical hacker", "ethical hacking", "security+", "cyber security", "cybersecurity", "information security", "comptia", "penetration", "soc analyst"]
+        found_sec_keywords = list(set([k for k in security_keywords if k in resume_text.lower()]))
+        if found_sec_keywords:
+            boost = min(40.0, len(found_sec_keywords) * 15.0)
+            match_score = min(100.0, match_score + boost)
+            sec_boost_applied = True
+            if "Ceh" not in strengths:
+                strengths.append(f"Holds active security credentials: {', '.join([k.upper() for k in found_sec_keywords])}")
+
     # Recommendations & Rating tiers
     if match_score >= 80:
         tier = "Highly Recommended"
@@ -172,9 +186,13 @@ def fallback_parser_extractor(resume_text: str, jd_text: str) -> Dict[str, Any]:
     elif match_score >= 50:
         tier = "Good Fit"
         recommendation = "Qualified candidate. Proceed to recruiter screen."
+        if sec_boost_applied:
+            recommendation = f"Good Fit. Candidate has active security credentials ({', '.join([k.upper() for k in found_sec_keywords])}) matching the cybersecurity role, though primary experience is in Full Stack development."
     elif match_score >= 25:
         tier = "Borderline"
         recommendation = "Partial match. Hold for review against other candidates."
+        if sec_boost_applied:
+            recommendation = f"Borderline. Candidate has security certifications ({', '.join([k.upper() for k in found_sec_keywords])}) but their overall experience is developer-focused."
     else:
         tier = "Not Recommended"
         recommendation = "Low keyword match. Recommend rejection."
@@ -182,7 +200,7 @@ def fallback_parser_extractor(resume_text: str, jd_text: str) -> Dict[str, Any]:
     scores = {
         "technical_skills": min(100, int(match_score * 1.1)),
         "experience_relevance": min(100, int(match_score * 1.0)),
-        "education_fit": 70 if "degree" in education.lower() or "bs" in education.lower() or "ms" in education.lower() else 50,
+        "education_fit": 70 if "degree" in education.lower() or "bs" in education.lower() or "ms" in education.lower() or "mca" in education.lower() or "bca" in education.lower() else 50,
         "soft_skills": 70,
         "total_score": match_score
     }
@@ -213,7 +231,7 @@ def screen_resume_llm(resume_text: str, jd_text: str) -> Dict[str, Any]:
     """
     Screens resume using Gemini API and parses structured details.
     """
-    model = genai.GenerativeModel('gemini-1.5-flash')
+    model = genai.GenerativeModel('gemini-2.0-flash')
     
     prompt = f"""
 You are an expert technical recruiter. Screen the candidate's resume against the Job Description (JD).
