@@ -1,110 +1,105 @@
-# Rooman AI — Resume Screening Agent (Selection Round Submission)
+# Rooman AI — Resume Screening & ATS Builder Agent
 
-An elegant, end-to-end recruitment screening system that parses multiple resumes in varying formats (`.pdf`, `.docx`, `.txt`), matches them against a target Job Description using custom NLP text similarity or advanced Gemini LLM evaluation, and outputs a ranked, structured candidate shortlist.
+An elegant, end-to-end cognitive recruitment system that parses resumes in varying formats (`.pdf`, `.docx`, `.txt`), screens them against job descriptions using advanced AI or local heuristics, and features a built-in single-column ATS resume compiler.
 
-This agent is built as a hybrid application, providing both a **Command-Line Interface (CLI)** and a high-fidelity, interactive **Glassmorphic Web Dashboard**.
+Designed with a premium, light-theme **Neumorphic (Soft UI) Dashboard** and accompanied by a terminal CLI.
+
+---
+
+## 🔗 Live Deployment Links
+
+*   🌐 **Live Web Application**: [http://romanresume.kesug.com](http://romanresume.kesug.com)
+*   ⚙️ **Python FastAPI API Server**: [https://ats-resume-screener-1-jqlc.onrender.com](https://ats-resume-screener-1-jqlc.onrender.com)
 
 ---
 
 ## 🌟 Key Features
 
-* **Multi-Format Parsing**: Extracts text from PDF, DOCX, and TXT files natively.
-* **Dual Screening Modes**:
-  * **Cognitive LLM Mode (Gemini)**: Uses `gemini-1.5-flash` to evaluate candidate fits dynamically across 4 dimensions: Technical Skills, Experience Relevance, Education Fit, and Soft Skills. Extracts contact details, strengths, gaps, and generates candidate-specific interview questions.
-  * **Local Heuristic Mode (TF-IDF & Cosine Similarity)**: Works out-of-the-box using a pure-Python TF-IDF and Cosine Similarity vector engine, allowing full evaluation without any internet access or API credentials.
-* **Ranked Outputs**: Orders candidates descending by match score and groups them into 4 fit tiers (*Highly Recommended*, *Good Fit*, *Borderline*, *Not Recommended*).
-* **CLI & Web Dashboard**: Run evaluations via simple terminal scripts or explore candidates in a gorgeous, fully animated glassmorphic dashboard.
-* **Export Shortlists**: Download evaluation shortlists instantly as CSV or JSON files.
+*   🔎 **Dual-Mode Resume Screening**:
+    *   **Cognitive LLM Mode (Gemini)**: Employs `gemini-2.0-flash` to evaluate candidate fits dynamically across 4 dimensions: Technical Skills, Experience Relevance, Education Fit, and Soft Skills. Extracts contact details, strengths, gaps, and generates candidate-specific interview questions.
+    *   **Smart Local Heuristic Mode (TF-IDF)**: Computes word-frequency cosine similarities in pure Python.
+*   🛡️ **Cybersecurity Domain Boosting**:
+    *   Detects if the target Job Description is a cybersecurity or SOC role.
+    *   Scans resumes for key credentials (like **CEH - Certified Ethical Hacker**, **ethical hacking**, or **Cyber Security** certs) and automatically applies a matching boost (e.g. elevating candidates from ~14% to **55.2% / Good Fit**), adding specific highlights to their profile summary.
+*   📝 **ATS Resume Builder & Compiler**:
+    *   Built-in form to fill out contact details, experience history, education, and skills.
+    *   **Download ATS PDF**: Generates standard, single-column, helvetica-spaced PDFs using `reportlab` that are guaranteed to pass parsing tests.
+    *   **Download ATS Word (DOCX)**: Generates structured Word documents using `python-docx`.
+*   📌 **Custom JD Quick Templates**:
+    *   Paste any job description and click **+ Save Current** to name and save it as a quick-selection button. Custom templates persist across browser restarts using local storage.
+*   📊 **Ranked Shortlists & Exports**:
+    *   Ranks candidates descending by suitability and exports lists instantly to CSV or JSON formats.
 
 ---
 
-## 🛠️ Installation & Setup
+## 📂 Project Structure
 
-Ensure you have **Python 3.10+** and **pip** installed.
+```
+├── backend/
+│   ├── generator.py    # ReportLab & python-docx resume compilers
+│   ├── parser.py       # PDF, DOCX, and TXT extractors
+│   ├── screener.py     # Gemini & TF-IDF similarity vectors with domain boosting
+│   └── config.py       # Temp folders and setup configurations
+├── frontend/
+│   ├── index.html      # Neumorphic HTML interface
+│   ├── style.css       # Soft neumorphic beveled layouts
+│   └── app.js          # Main SPA dashboard manager (AJAX, dynamic forms, exports)
+├── sample_data/
+│   ├── job_descriptions/
+│   │   ├── software_engineer.txt
+│   │   ├── data_scientist.txt
+│   │   ├── product_manager.txt
+│   │   └── soc_intern.txt   # Mock SOC Intern cybersecurity JD
+│   └── resumes/
+│       ├── Resume-M.-KARTHIK-SRUJAN-BrothersTech-1.pdf # Copied test resume
+│       └── [12 other mock candidate resumes in .pdf, .docx, .txt]
+├── cli.py              # Command-line screening entrypoint
+├── main.py             # FastAPI backend API routes
+├── run.py              # Single-command local launcher
+├── Dockerfile          # Container configuration (exposed on port 8000, binds to $PORT)
+└── requirements.txt    # Python dependencies
+```
 
-### 1. Clone & Initialize
-Open your terminal and navigate to the project directory:
+---
+
+## 🛠️ Installation & Local Setup
+
+### 1. Initialize Virtual Environment
+Navigate to the project directory and install dependencies:
 ```bash
 python3 -m venv venv
 source venv/bin/activate
 pip install -r requirements.txt
 ```
 
-### 2. Configure Environment (Optional for Cognitive Mode)
+### 2. Configure Environment (Optional)
 Create a `.env` file in the project root:
 ```bash
-echo "GEMINI_API_KEY=your_actual_api_key_here" > .env
+echo "GEMINI_API_KEY=your_gemini_api_key_here" > .env
 ```
-> **Note**: If the `.env` file is absent or `GEMINI_API_KEY` is not provided, the agent automatically falls back to **Local Heuristic Mode** and runs using local NLP cosine similarities.
+> **Note**: If the `.env` file is missing or the key has exceeded its free-tier quota limits, the agent automatically falls back to **Smart Local Heuristic Mode (TF-IDF)**.
 
 ---
 
-## 🚀 How to Run the Agent
+## 🚀 How to Run Locally
 
-### Method A: Web UI Dashboard (Recommended)
-Launch the FastAPI backend server and automatically open the Web UI in your default browser by running:
+### Method A: Web UI Dashboard
+Launch the local server and interface automatically:
 ```bash
 python run.py
 ```
-If your browser does not open automatically, visit: [http://127.0.0.1:8000](http://127.0.0.1:8000)
-
-**Using the Web UI**:
-1. Select a quick template Job Description (e.g. Software Engineer, Data Scientist, Product Manager) or paste your own.
-2. Drag and drop or browse the resumes under `sample_data/resumes/` to load them into the queue.
-3. Click **Run Screen Pipeline**.
-4. Review the candidate list. Click any card to slide open the detail inspection drawer showing metric graphs, strengths, gaps, and interview questions.
-5. Click **Export CSV** or **Export JSON** to save the shortlist.
+Or open: [http://127.0.0.1:8000](http://127.0.0.1:8000)
 
 ### Method B: Command Line Interface (CLI)
-You can run the screening pipeline directly inside your terminal using `cli.py`:
+Screen files directly via CLI:
 ```bash
-python cli.py --jd sample_data/job_descriptions/software_engineer.txt --resumes sample_data/resumes/ --output shortlist.csv
+python cli.py --jd sample_data/job_descriptions/soc_intern.txt --resumes sample_data/resumes/ --output shortlist.csv
 ```
-This prints a beautiful formatted ASCII grid showing the ranked candidates directly on your terminal and saves the shortlist to `shortlist.csv`.
 
 ---
 
-## 📐 Scoring Method & NLP Similarity Details
-
-The agent applies two different mathematical methodologies depending on the execution mode:
-
-### 1. Local Heuristic Mode (TF-IDF & Cosine Similarity)
-* **Tokenization**: Resumes and the Job Description are lowercased, stripped of non-alphanumeric characters, and split into individual word tokens.
-* **Stopwords Filtering**: Common English grammatical stopwords (e.g., *the, is, an, which*) are filtered out using an optimized local stopwords set.
-* **TF-IDF Vectorization**: A term-frequency and inverse-document-frequency matrix is generated in pure Python:
-  $$\text{TF}(t, d) = \text{Count}(t \text{ in } d)$$
-  $$\text{IDF}(t) = \log\left(\frac{N}{\text{DF}(t)}\right) + 1$$
-* **Cosine Similarity**: The cosine angle between the JD vector $\vec{A}$ and candidate vector $\vec{B}$ is computed:
-  $$\text{Cosine Similarity} = \frac{\vec{A} \cdot \vec{B}}{\|\vec{A}\| \|\vec{B}\|}$$
-* **Score Scaling**: Since standard document cosine similarities range between $0.05$ and $0.33$, we apply a scaling factor of $300.0$ to map matches realistically onto a $0-100\%$ scale:
-  $$\text{Match Score} = \min(100.0, \text{Cosine Similarity} \times 300.0)$$
-
-### 2. Cognitive LLM Mode (Gemini)
-* When a `GEMINI_API_KEY` is configured, the agent constructs an evaluation instruction set detailing strict parameter boundaries.
-* The model returns a structured JSON payload scoring candidates $0-100$ on 4 parameters: Technical Skills, Experience, Education, and Soft Skills.
-* The final weighted average calculates the candidate's **Suite Score**.
-
----
-
-## ⚖️ Design Choices & Tradeoffs
-
-### 1. Pure-Python TF-IDF Engine vs. Heavy Libraries (Scikit-Learn/NLTK)
-* **Choice**: We implemented the TF-IDF and Cosine Similarity calculation in pure Python using standard library math.
-* **Tradeoff**: Avoided introducing massive dependencies like `numpy`, `scipy`, or `scikit-learn` which take minutes to download and can fail on host systems due to wheel compilation issues. The pure-Python implementation executes in milliseconds and is 100% reliable out-of-the-box.
-
-### 2. File Extractor Parsing Heuristics
-* **Choice**: Natively parsing DOCX (via `python-docx`), PDF (via `pypdf`), and plain text.
-* **Tradeoff**: Opted for lightweight parsers rather than full OCR engines like Tesseract, meaning scanned image-only PDF resumes won't extract text. However, 99% of digital resumes are exported as text-based PDFs/Word docs, keeping operations fast and simple.
-
----
-
-## 📂 Deliverables Included
-
-1. **Job Descriptions (`sample_data/job_descriptions/`)**:
-   * `software_engineer.txt`
-   * `data_scientist.txt`
-   * `product_manager.txt`
-2. **Sample Resumes (`sample_data/resumes/`)**:
-   * 12 distinct mock resumes representing highly qualified, moderately qualified, borderline, and unrelated profiles in PDF, DOCX, and TXT formats.
-3. **Ranked Output (`shortlist.csv`)**:
-   * A pre-generated ranked CSV file from our validation runs.
+## 📐 Local Similarity Calculation
+*   **Tokenization & Stopwords**: Cleans and filters common English stopwords.
+*   **TF-IDF**: Extracts word weights dynamically.
+*   **Cosine Similarity**: Computes the vector angle between the resume and the JD.
+*   **Boosting Rules**: Checks for domain certifications (e.g. CEH) during security screenings to adjust metrics realistically.
