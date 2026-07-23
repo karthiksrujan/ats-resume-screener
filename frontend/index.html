@@ -3,12 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Rooman AI — Resume Screening Agent</title>
+    <title>Rooman AI — Recruitment Suite</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="/static/style.css">
-    <script defer src="/static/app.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+    <link rel="stylesheet" href="/static/style.css?v=2.0">
+    <script defer src="/static/app.js?v=2.0"></script>
 </head>
 <body>
     <script>
@@ -19,300 +22,787 @@
             debugDiv.style.left = '10px';
             debugDiv.style.background = '#fee2e2';
             debugDiv.style.color = '#991b1b';
-            debugDiv.style.padding = '15px';
+            debugDiv.style.padding = '12px 16px';
             debugDiv.style.border = '2px solid #f87171';
-            debugDiv.style.borderRadius = '8px';
+            debugDiv.style.borderRadius = '12px';
             debugDiv.style.zIndex = '99999';
-            debugDiv.style.maxWidth = '90%';
             debugDiv.style.fontSize = '12px';
             debugDiv.style.fontFamily = 'monospace';
-            debugDiv.style.whiteSpace = 'pre-wrap';
+            debugDiv.style.boxShadow = '0 10px 25px rgba(0,0,0,0.15)';
             debugDiv.innerHTML = '<strong>JS Error:</strong> ' + message + '\nLine: ' + lineno + '\nSource: ' + source;
             document.body.appendChild(debugDiv);
             return false;
         };
     </script>
-    <!-- Ambient Background Glows -->
-    <div class="bg-glow bg-glow-1"></div>
-    <div class="bg-glow bg-glow-2"></div>
 
-    <div class="app-container">
-        <!-- Header -->
-        <header class="app-header">
-            <div class="header-logo">
-                <div class="logo-icon">R</div>
-                <div class="logo-text">
-                    <h1>Rooman AI</h1>
-                    <span>Cognitive Recruitment Agent</span>
+    <div class="app-layout">
+        <!-- Sidebar Navigation -->
+        <aside class="sidebar">
+            <div class="sidebar-logo">
+                <div class="logo-badge">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 18v-5.25m0 0a6.01 6.01 0 001.5-.189m-1.5.189a6.01 6.01 0 01-1.5-.189m3.75 7.478a12.06 12.06 0 01-4.5 0m3.75 2.383a14.406 14.406 0 01-3 0M14.25 18v-.192c0-.983.658-1.823 1.508-2.316a7.5 7.5 0 10-7.516 0c.85.493 1.508 1.333 1.508 2.316V18" />
+                    </svg>
+                </div>
+                <div class="logo-title">
+                    <h2>Rooman AI</h2>
+                    <span>RECRUITMENT SUITE</span>
                 </div>
             </div>
-            <div class="header-nav">
-                <button type="button" class="btn-nav active" id="tabScreener">Resume Screener</button>
-                <button type="button" class="btn-nav" id="tabGenerator">ATS Resume Builder</button>
-                <button type="button" class="btn-nav" id="tabCRM">Saved Candidates</button>
+
+            <nav class="sidebar-menu">
+                <button type="button" class="nav-item active" id="tabDashboard">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6A2.25 2.25 0 016 3.75h2.25A2.25 2.25 0 0110.5 6v2.25a2.25 2.25 0 01-2.25 2.25H6a2.25 2.25 0 01-2.25-2.25V6zM3.75 15.75A2.25 2.25 0 016 13.5h2.25a2.25 2.25 0 012.25 2.25V18a2.25 2.25 0 01-2.25 2.25H6A2.25 2.25 0 013.75 18v-2.25zM13.5 6a2.25 2.25 0 012.25-2.25H18A2.25 2.25 0 0120.25 6v2.25A2.25 2.25 0 0118 10.5h-2.25a2.25 2.25 0 01-2.25-2.25V6zM13.5 15.75a2.25 2.25 0 012.25-2.25H18a2.25 2.25 0 012.25 2.25V18A2.25 2.25 0 0118 20.25h-2.25A2.25 2.25 0 0113.5 18v-2.25z" /></svg>
+                    <span>Dashboard</span>
+                </button>
+                <button type="button" class="nav-item" id="tabScreener">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" /></svg>
+                    <span>Candidates</span>
+                </button>
+                <button type="button" class="nav-item" id="tabCRM">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M20.25 14.15v4.25c0 1.094-.787 2.036-1.872 2.18-2.087.277-4.216.42-6.378.42s-4.291-.143-6.378-.42c-1.085-.144-1.872-1.086-1.872-2.18v-4.25m16.5 0a2.18 2.18 0 00.75-1.661V8.706c0-1.081-.768-2.015-1.837-2.175a48.114 48.114 0 00-3.413-.387m4.5 8.006c-.194.165-.42.295-.673.38A23.978 23.978 0 0112 15.75c-2.648 0-5.195-.429-7.577-1.22a2.016 2.016 0 01-.673-.38m0 0A2.18 2.18 0 013 12.489V8.706c0-1.081.768-2.015 1.837-2.175a48.111 48.111 0 013.413-.387m7.5 0V5.25A2.25 2.25 0 0013.5 3h-3a2.25 2.25 0 00-2.25 2.25v1.243m7.5 0a48.667 48.667 0 00-7.5 0" /></svg>
+                    <span>CRM Tracker</span>
+                </button>
+                <button type="button" class="nav-item" id="tabAnalytics">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v6.75C7.5 20.496 6.996 21 6.375 21h-2.25A1.125 1.125 0 013 19.875v-6.75zM9.75 8.625c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v11.25c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V8.625zM16.5 4.125c0-.621.504-1.125 1.125-1.125h2.25C20.496 3 21 3.504 21 4.125v15.75c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V4.125z" /></svg>
+                    <span>Match Analytics</span>
+                </button>
+                <button type="button" class="nav-item" id="tabGenerator">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" /></svg>
+                    <span>Resume Builder</span>
+                </button>
+                <button type="button" class="nav-item" id="tabInterviews">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 11.25v7.5" /></svg>
+                    <span>Interviews</span>
+                </button>
+                <button type="button" class="nav-item" id="tabSettings">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9.594 3.94c.09-.542.56-.94 1.11-.94h2.593c.55 0 1.02.398 1.11.94l.213 1.281c.063.374.313.686.645.87.074.04.147.083.22.127.324.196.72.257 1.075.124l1.217-.456a1.125 1.125 0 011.37.49l1.296 2.247a1.125 1.125 0 01-.26 1.431l-1.003.827c-.293.24-.438.613-.431.992a6.759 6.759 0 010 .255c-.007.378.138.75.43.991l1.004.827c.424.35.534.954.26 1.43l-1.298 2.247a1.125 1.125 0 01-1.369.491l-1.217-.456c-.355-.133-.75-.072-1.076.124a6.57 6.57 0 01-.22.128c-.331.183-.581.495-.644.869l-.213 1.28c-.09.543-.56.941-1.11.941h-2.594c-.55 0-1.02-.398-1.11-.94l-.213-1.281c-.062-.374-.312-.686-.644-.87a6.52 6.52 0 01-.22-.127c-.325-.196-.72-.257-1.076-.124l-1.217.456a1.125 1.125 0 01-1.369-.49l-1.297-2.247a1.125 1.125 0 01.26-1.431l1.004-.827c.292-.24.437-.613.43-.992a6.932 6.932 0 010-.255c.007-.378-.138-.75-.43-.991l-1.004-.827a1.125 1.125 0 01-.26-1.43l1.297-2.247a1.125 1.125 0 011.37-.491l1.216.456c.356.133.751.072 1.076-.124.072-.044.146-.087.22-.128.332-.183.582-.495.644-.869l.214-1.28z" /><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
+                    <span>Settings</span>
+                </button>
+            </nav>
+
+            <div class="sidebar-footer">
+                <button type="button" class="btn-create-job" id="btnQuickCreateJob">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 4.5v15m7.5-7.5h-15"/></svg>
+                    <span>+ Create New Job</span>
+                </button>
+                <div class="sidebar-links">
+                    <a href="#" id="linkHelp">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9.879 7.519c1.171-1.025 3.071-1.025 4.242 0 1.172 1.025 1.172 2.687 0 3.712-.203.179-.43.326-.67.442-.745.361-1.45.999-1.45 1.827v.75M12 18h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                        Help Center
+                    </a>
+                    <a href="#" id="linkLogout" style="color: #ef4444;">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6a2.25 2.25 0 00-2.25 2.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15M12 9l3 3m0 0l-3 3m3-3H2.25" /></svg>
+                        Logout
+                    </a>
+                </div>
             </div>
-            <div class="header-status">
-                <div class="status-indicator" id="apiStatusIndicator"></div>
-                <span id="apiStatusText">Connecting to backend...</span>
-            </div>
-        </header>
+        </aside>
 
-        <!-- Main Workspace -->
-        <main class="workspace" id="screenerWorkspace">
-            <!-- Sidebar: JD Panel -->
-            <section class="panel jd-panel">
-                <div class="panel-header">
-                    <h2>Job Description</h2>
-                    <p>Provide the target job requirements</p>
-                </div>
-                
-                <div class="jd-templates">
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.4rem;">
-                        <label style="margin-bottom: 0;">Quick Templates:</label>
-                        <button type="button" class="btn-template" id="btnSaveCustomJD" style="font-size: 10.5px; padding: 0.25rem 0.6rem; margin: 0; color: var(--primary); border: 1px dashed var(--primary); border-radius: 8px; box-shadow: var(--shadow-out-sm);">+ Save Current</button>
-                    </div>
-                    <div class="template-buttons" id="templateButtons">
-                        <button type="button" class="btn-template skeleton" data-jd="software_engineer">Software Engineer</button>
-                        <button type="button" class="btn-template skeleton" data-jd="data_scientist">Data Scientist</button>
-                        <button type="button" class="btn-template skeleton" data-jd="product_manager">Product Manager</button>
-                    </div>
+        <!-- Main Work Area -->
+        <div class="main-wrapper">
+            <!-- Top Header Bar -->
+            <header class="top-header">
+                <div class="header-search">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" /></svg>
+                    <input type="text" id="globalSearchInput" placeholder="Search candidates, jobs, or analytics...">
                 </div>
 
-                <div class="editor-container">
-                    <textarea id="jdInput" placeholder="Paste your Job Description here... (Include required skills, experience, and educational qualifications)"></textarea>
-                </div>
-            </section>
-
-            <!-- Main Content Area -->
-            <section class="main-content">
-                <!-- Dropzone Section -->
-                <div class="panel upload-panel">
-                    <div class="panel-header">
-                        <h2>Upload Resumes</h2>
-                        <p>Supports PDF, DOCX, and TXT files (Upload 10+ resumes to screen at once)</p>
-                    </div>
-                    
-                    <input type="file" id="fileInput" multiple accept=".pdf,.docx,.txt" style="display: none;">
-                    <div class="dropzone" id="dropzone">
-                        <div class="dropzone-content">
-                            <svg class="upload-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M12 16.5V9.75m0 0l3 3m-3-3l-3 3M6.75 19.5a4.5 4.5 0 01-1.41-8.775 5.25 5.25 0 0110.233-2.33 3 3 0 013.758 3.848A3.752 3.752 0 0118 19.5H6.75z" />
-                            </svg>
-                            <h3>Drag & drop resumes here</h3>
-                            <p>or <span class="browse-link">browse files</span> from your computer</p>
-                        </div>
-                    </div>
-                    
-                    <!-- File Queue List -->
-                    <div class="file-queue" id="fileQueue" style="display: none;">
-                        <div class="queue-header">
-                            <h4>Selected Files (<span id="queueCount">0</span>)</h4>
-                            <button type="button" class="btn-clear" id="btnClearQueue">Clear All</button>
-                        </div>
-                        <div class="queue-list" id="queueList"></div>
-                        <div class="action-bar">
-                            <button type="button" class="btn-primary" id="btnScreen">
-                                <span>Run Screen Pipeline</span>
-                                <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M13 5l7 7-7 7M5 5l7 7-7 7" />
-                                </svg>
-                            </button>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Live Logs / Loader (Hidden by default) -->
-                <div class="panel status-panel" id="statusPanel" style="display: none;">
-                    <div class="spinner-container">
-                        <div class="custom-spinner"></div>
-                        <div class="status-log">
-                            <h3 id="statusTitle">Screening Candidates...</h3>
-                            <p id="statusSubtitle">Analyzing resumes with Gemini cognitive engine.</p>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Dashboard Results (Hidden by default until run completed) -->
-                <div class="panel dashboard-panel" id="dashboardPanel" style="display: none;">
-                    <div class="dashboard-header">
-                        <div>
-                            <h2>Screening Results</h2>
-                            <p>Ranked candidates based on job description suitability</p>
-                        </div>
-                        <div class="export-actions">
-                            <button type="button" class="btn-secondary" id="btnExportCSV">Export CSV</button>
-                            <button type="button" class="btn-secondary" id="btnExportJSON">Export JSON</button>
-                        </div>
-                    </div>
-
-                    <!-- Fit Filters -->
-                    <div class="fit-filters">
-                        <button type="button" class="btn-filter active" data-filter="all">All <span class="filter-count" id="countAll">0</span></button>
-                        <button type="button" class="btn-filter" data-filter="Highly Recommended">Highly Recommended <span class="filter-count" id="countHighly">0</span></button>
-                        <button type="button" class="btn-filter" data-filter="Good Fit">Good Fit <span class="filter-count" id="countGood">0</span></button>
-                        <button type="button" class="btn-filter" data-filter="Borderline">Borderline <span class="filter-count" id="countBorderline">0</span></button>
-                        <button type="button" class="btn-filter" data-filter="Not Recommended">Not Recommended <span class="filter-count" id="countNotRec">0</span></button>
-                    </div>
-
-                    <!-- Candidates List -->
-                    <div class="candidates-list" id="candidatesList"></div>
-                </div>
-            </section>
-        </main>
-
-        <!-- ATS Resume Generator Workspace -->
-        <main class="workspace" id="generatorWorkspace" style="display: none;">
-            <!-- Left Panel: Resume Builder Form -->
-            <section class="panel" style="max-height: calc(100vh - 8rem); overflow-y: auto;">
-                <div class="panel-header">
-                    <h2>ATS Resume Builder</h2>
-                    <p>Enter your professional details to generate an ATS-optimized resume</p>
-                </div>
-
-                <!-- Personal Information -->
-                <div class="form-group-section">
-                    <h3 style="font-size: 14px; text-transform: uppercase; color: var(--text-muted); margin-bottom: 0.75rem;">Personal Information</h3>
-                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; margin-bottom: 0.75rem;">
-                        <input type="text" id="builderName" placeholder="Full Name" style="background: var(--bg-base); box-shadow: var(--shadow-in); border: none; border-radius: 12px; padding: 0.65rem 1rem; color: var(--text-primary); font-family: var(--font-body); font-size: 13px; outline: none;">
-                        <input type="email" id="builderEmail" placeholder="Email Address" style="background: var(--bg-base); box-shadow: var(--shadow-in); border: none; border-radius: 12px; padding: 0.65rem 1rem; color: var(--text-primary); font-family: var(--font-body); font-size: 13px; outline: none;">
-                    </div>
-                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; margin-bottom: 0.75rem;">
-                        <input type="text" id="builderPhone" placeholder="Phone Number" style="background: var(--bg-base); box-shadow: var(--shadow-in); border: none; border-radius: 12px; padding: 0.65rem 1rem; color: var(--text-primary); font-family: var(--font-body); font-size: 13px; outline: none;">
-                        <input type="text" id="builderLocation" placeholder="Location (e.g. San Francisco, CA)" style="background: var(--bg-base); box-shadow: var(--shadow-in); border: none; border-radius: 12px; padding: 0.65rem 1rem; color: var(--text-primary); font-family: var(--font-body); font-size: 13px; outline: none;">
-                    </div>
-                    <input type="text" id="builderLinkedin" placeholder="LinkedIn URL / Portfolio" style="width: 100%; background: var(--bg-base); box-shadow: var(--shadow-in); border: none; border-radius: 12px; padding: 0.65rem 1rem; color: var(--text-primary); font-family: var(--font-body); font-size: 13px; outline: none; margin-bottom: 0.75rem;">
-                </div>
-
-                <!-- Professional Summary -->
-                <div class="form-group-section">
-                    <h3 style="font-size: 14px; text-transform: uppercase; color: var(--text-muted); margin-bottom: 0.75rem;">Professional Summary</h3>
-                    <textarea id="builderSummary" placeholder="Write a brief professional summary..." style="width: 100%; height: 80px; background: var(--bg-base); box-shadow: var(--shadow-in); border: none; border-radius: 12px; padding: 0.75rem 1rem; color: var(--text-primary); font-family: var(--font-body); font-size: 13px; outline: none; resize: none;"></textarea>
-                </div>
-
-                <!-- Work Experience Section -->
-                <div class="form-group-section">
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem;">
-                        <h3 style="font-size: 14px; text-transform: uppercase; color: var(--text-muted);">Work Experience</h3>
-                        <button type="button" class="btn-template" id="btnAddExperience" style="padding: 0.25rem 0.6rem; border-radius: 8px;">+ Add</button>
-                    </div>
-                    <div id="experienceContainer" style="display: flex; flex-direction: column; gap: 1rem;">
-                        <!-- Dynamically populated experience blocks -->
-                    </div>
-                </div>
-
-                <!-- Education Section -->
-                <div class="form-group-section">
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem;">
-                        <h3 style="font-size: 14px; text-transform: uppercase; color: var(--text-muted);">Education</h3>
-                        <button type="button" class="btn-template" id="btnAddEducation" style="padding: 0.25rem 0.6rem; border-radius: 8px;">+ Add</button>
-                    </div>
-                    <div id="educationContainer" style="display: flex; flex-direction: column; gap: 1rem;">
-                        <!-- Dynamically populated education blocks -->
-                    </div>
-                </div>
-
-                <!-- Skills Section -->
-                <div class="form-group-section">
-                    <h3 style="font-size: 14px; text-transform: uppercase; color: var(--text-muted); margin-bottom: 0.75rem;">Skills</h3>
-                    <textarea id="builderSkills" placeholder="List your technical and soft skills (comma-separated, e.g. Python, FastAPI, Git, System Design)" style="width: 100%; height: 80px; background: var(--bg-base); box-shadow: var(--shadow-in); border: none; border-radius: 12px; padding: 0.75rem 1rem; color: var(--text-primary); font-family: var(--font-body); font-size: 13px; outline: none; resize: none;"></textarea>
-                </div>
-            </section>
-
-            <!-- Right Panel: Actions & Export -->
-            <section class="panel">
-                <div class="panel-header">
-                    <h2>Actions & Preview</h2>
-                    <p>Compile and download your ATS-compliant resume</p>
-                </div>
-
-                <!-- Neumorphic Preview/Info Box -->
-                <div style="background: var(--bg-base); box-shadow: var(--shadow-in); border-radius: 20px; padding: 1.5rem; display: flex; flex-direction: column; gap: 1rem; font-size: 13px; color: var(--text-secondary);">
-                    <h4 style="color: var(--text-primary);">ATS Optimization Rules Applied:</h4>
-                    <ul style="padding-left: 1rem; display: flex; flex-direction: column; gap: 0.5rem; line-height: 1.4;">
-                        <li><strong>Single-Column Layout</strong>: Guaranteed readable by modern parsers.</li>
-                        <li><strong>Standard System Fonts</strong>: Uses standard Arial/Helvetica.</li>
-                        <li><strong>Standard Section Titles</strong>: Recognizable by parser indexing rules.</li>
-                        <li><strong>No Tables/Graphics</strong>: Prevents parsing failure or character corruption.</li>
-                    </ul>
-                </div>
-
-                <div style="display: flex; flex-direction: column; gap: 1rem; margin-top: 1rem;">
-                    <button type="button" class="btn-primary" id="btnGeneratePDF" style="width: 100%; justify-content: center; padding: 1rem;">
-                        <span>Download ATS PDF</span>
+                <div class="header-right">
+                    <button type="button" class="btn-icon-soft" id="btnNotifications" title="Notifications">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M14.857 17.082a23.848 23.848 0 005.454-1.31A8.967 8.967 0 0118 9.75v-.7V9A6 6 0 006 9v.75a8.967 8.967 0 01-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 01-5.714 0m5.714 0a3 3 0 11-5.714 0" /></svg>
                     </button>
-                    <button type="button" class="btn-secondary" id="btnGenerateDOCX" style="width: 100%; justify-content: center; padding: 1rem; box-shadow: var(--shadow-out);">
-                        <span>Download ATS DOCX</span>
+                    <button type="button" class="btn-icon-soft" id="btnHistory" title="History">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
                     </button>
-                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
-                        <button type="button" class="btn-template" id="btnLoadSampleBuilder" style="padding: 0.75rem;">Load Demo Data</button>
-                        <button type="button" class="btn-template" id="btnResetBuilder" style="padding: 0.75rem; color: var(--tier-notrec);">Reset Form</button>
+
+                    <button type="button" class="btn-secondary-pill" id="btnBulkMatch">Bulk Match</button>
+                    <button type="button" class="btn-primary-pill" id="btnAddCandidateHeader">+ Add Candidate</button>
+
+                    <div class="user-avatar-badge">
+                        <div class="avatar-img">
+                            <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=120&q=80" alt="Sarah Rivera" onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' width=\'36\' height=\'36\' viewBox=\'0 0 24 24\' fill=\'%230284c7\'><circle cx=\'12\' cy=\'12\' r=\'10\' fill=\'%230284c7\'/><text x=\'50%\' y=\'55%\' font-size=\'10\' fill=\'white\' text-anchor=\'middle\' dominant-baseline=\'middle\' font-weight=\'bold\'>SR</text></svg>'">
+                        </div>
+                        <div class="user-info">
+                            <span class="user-name">Sarah Rivera</span>
+                            <span class="user-role">Senior Recruiter</span>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <!-- WORKSPACE 1: Unified Dashboard View -->
+            <main class="workspace-view active" id="dashboardWorkspace">
+                <div class="page-title-header">
+                    <h2>Unified Dashboard</h2>
+                    <p>Welcome back, Sarah. Here's your recruitment pipeline performance for this week.</p>
+                </div>
+
+                <!-- 4 Top Metric Cards -->
+                <div class="metrics-grid">
+                    <div class="metric-card">
+                        <div class="metric-header">
+                            <span class="metric-label">TOTAL PROCESSED</span>
+                            <div class="metric-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z"/></svg></div>
+                        </div>
+                        <div class="metric-value">1,284</div>
+                        <div class="metric-subtext text-success">
+                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M4.5 19.5l15-15m0 0H8.25m11.25 0v11.25"/></svg>
+                            12.4% vs last month
+                        </div>
+                    </div>
+
+                    <div class="metric-card">
+                        <div class="metric-header">
+                            <span class="metric-label">AVG. MATCH SCORE</span>
+                            <div class="metric-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg></div>
+                        </div>
+                        <div class="metric-value">84%</div>
+                        <div class="metric-progress-bg">
+                            <div class="metric-progress-fill" style="width: 84%;"></div>
+                        </div>
+                    </div>
+
+                    <div class="metric-card">
+                        <div class="metric-header">
+                            <span class="metric-label">PENDING INTERVIEWS</span>
+                            <div class="metric-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 11.25v7.5"/></svg></div>
+                        </div>
+                        <div class="metric-value">18</div>
+                        <div class="metric-subtext text-secondary">
+                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+                            6 scheduled for today
+                        </div>
+                    </div>
+
+                    <div class="metric-card">
+                        <div class="metric-header">
+                            <span class="metric-label">ACTIVE JOBS</span>
+                            <div class="metric-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.25 14.15v4.25c0 1.094-.787 2.036-1.872 2.18-2.087.277-4.216.42-6.378.42s-4.291-.143-6.378-.42c-1.085-.144-1.872-1.086-1.872-2.18v-4.25m16.5 0a2.18 2.18 0 00.75-1.661V8.706c0-1.081-.768-2.015-1.837-2.175a48.114 48.114 0 00-3.413-.387m4.5 8.006c-.194.165-.42.295-.673.38A23.978 23.978 0 0112 15.75c-2.648 0-5.195-.429-7.577-1.22a2.016 2.016 0 01-.673-.38m0 0A2.18 2.18 0 013 12.489V8.706c0-1.081.768-2.015 1.837-2.175a48.111 48.111 0 013.413-.387m7.5 0V5.25A2.25 2.25 0 0013.5 3h-3a2.25 2.25 0 00-2.25 2.25v1.243m7.5 0a48.667 48.667 0 00-7.5 0"/></svg></div>
+                        </div>
+                        <div class="metric-value">42</div>
+                        <a href="#" class="metric-link" id="linkViewPipeline">View Pipeline &rsaquo;</a>
                     </div>
                 </div>
 
-                <!-- Cover Letter Builder Section -->
-                <div class="panel-header" style="margin-top: 1.5rem; border-top: 1px solid rgba(0,0,0,0.05); padding-top: 1.5rem;">
-                    <h2>AI Cover Letter Builder</h2>
-                    <p>Draft a tailored cover letter based on this profile</p>
+                <!-- Dashboard Content Layout -->
+                <div class="dashboard-body-grid">
+                    <!-- Left: Top Talent Matches -->
+                    <div class="soft-card dashboard-main-card">
+                        <div class="card-header-row">
+                            <h3>Top Talent Matches</h3>
+                            <button type="button" class="btn-link" id="btnSeeAllReports">See All Match Reports</button>
+                        </div>
+
+                        <div class="match-list" id="dashboardTopMatches">
+                            <div class="match-item-card" onclick="openDemoCandidate('Alex Thompson')">
+                                <div class="avatar-score">
+                                    <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=120&q=80" alt="Alex Thompson" class="avatar-thumb">
+                                    <span class="score-pill-green">98</span>
+                                </div>
+                                <div class="item-info">
+                                    <div class="item-title">Alex Thompson</div>
+                                    <div class="item-sub">Senior Fullstack Engineer • London, UK</div>
+                                </div>
+                                <div class="item-tags">
+                                    <span class="soft-tag">React</span>
+                                    <span class="soft-tag">Node.js</span>
+                                    <span class="soft-tag">+4 more</span>
+                                </div>
+                                <div class="item-action">
+                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z"/></svg>
+                                </div>
+                            </div>
+
+                            <div class="match-item-card" onclick="openDemoCandidate('Sophia Martinez')">
+                                <div class="avatar-score">
+                                    <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=120&q=80" alt="Sophia Martinez" class="avatar-thumb">
+                                    <span class="score-pill-green">92</span>
+                                </div>
+                                <div class="item-info">
+                                    <div class="item-title">Sophia Martinez</div>
+                                    <div class="item-sub">Product Lead • Remote</div>
+                                </div>
+                                <div class="item-tags">
+                                    <span class="soft-tag">Roadmap</span>
+                                    <span class="soft-tag">Agile</span>
+                                    <span class="soft-tag">+2 more</span>
+                                </div>
+                                <div class="item-action">
+                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z"/></svg>
+                                </div>
+                            </div>
+
+                            <div class="match-item-card" onclick="openDemoCandidate('Jordan Wei')">
+                                <div class="avatar-score">
+                                    <img src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=120&q=80" alt="Jordan Wei" class="avatar-thumb">
+                                    <span class="score-pill-green">89</span>
+                                </div>
+                                <div class="item-info">
+                                    <div class="item-title">Jordan Wei</div>
+                                    <div class="item-sub">UX/UI Designer • San Francisco</div>
+                                </div>
+                                <div class="item-tags">
+                                    <span class="soft-tag">Figma</span>
+                                    <span class="soft-tag">Prototyping</span>
+                                </div>
+                                <div class="item-action">
+                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z"/></svg>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Right Column: Quick Tools + Recent Activity -->
+                    <div class="dashboard-side-col">
+                        <!-- Quick Tools -->
+                        <div class="soft-card">
+                            <h3>Quick Tools</h3>
+                            <div class="tool-cards">
+                                <div class="tool-item" id="btnLaunchScreening">
+                                    <div class="tool-icon bg-blue-soft">
+                                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15.59 14.37a6 6 0 01-5.84 7.38v-4.8m5.84-2.58a14.98 14.98 0 006.16-12.12A14.98 14.98 0 009.631 8.41m5.96 5.96a14.926 14.926 0 01-5.841 2.58m-.119-8.54a6 6 0 00-7.381 5.84h4.8m2.581-5.84a14.927 14.927 0 00-2.58 5.84m2.699 2.7c-.103.021-.207.041-.311.06a15.09 15.09 0 01-2.448-2.448 14.9 14.9 0 01.06-.312m-2.24 2.24a6 6 0 00-2.12 4.13h3.01m-3.01 0a6 6 0 004.13-2.12m0 0a14.9 14.9 0 012.448-2.448m0 0a14.9 14.9 0 01.312-.06"/></svg>
+                                    </div>
+                                    <div class="tool-text">
+                                        <h4>Screening Engine</h4>
+                                        <p>Start AI automation</p>
+                                    </div>
+                                </div>
+
+                                <div class="tool-item" id="btnLaunchBuilder">
+                                    <div class="tool-icon bg-cyan-soft">
+                                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10"/></svg>
+                                    </div>
+                                    <div class="tool-text">
+                                        <h4>Resume Builder</h4>
+                                        <p>Create JD from AI</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Recent Activity -->
+                        <div class="soft-card">
+                            <h3>Recent Activity</h3>
+                            <div class="activity-feed">
+                                <div class="activity-item">
+                                    <div class="activity-icon bg-success-light">
+                                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M4.5 12.75l6 6 9-13.5"/></svg>
+                                    </div>
+                                    <div class="activity-content">
+                                        <p><strong>Screening Complete</strong>: 12 candidates for "Marketing Manager"</p>
+                                        <span class="activity-time">2 hours ago</span>
+                                    </div>
+                                </div>
+
+                                <div class="activity-item">
+                                    <div class="activity-icon bg-info-light">
+                                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75"/></svg>
+                                    </div>
+                                    <div class="activity-content">
+                                        <p><strong>Interview Invite Sent</strong> to Alex Thompson for technical round.</p>
+                                        <span class="activity-time">5 hours ago</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-                <div style="display: flex; flex-direction: column; gap: 0.75rem;">
-                    <textarea id="clTargetJD" placeholder="Paste the target Job Description here to customize the cover letter..." style="width: 100%; height: 75px; background: var(--bg-base); box-shadow: var(--shadow-in); border: none; border-radius: 12px; padding: 0.75rem 1rem; color: var(--text-primary); font-family: var(--font-body); font-size: 13px; outline: none; resize: none;"></textarea>
-                    <button type="button" class="btn-secondary" id="btnGenerateCL" style="width: 100%; justify-content: center; padding: 0.75rem; box-shadow: var(--shadow-out);">
-                        <span>Generate Cover Letter</span>
-                    </button>
-                    <div id="clResultContainer" style="display: none; flex-direction: column; gap: 0.75rem; margin-top: 0.5rem;">
-                        <textarea id="clResultText" style="width: 100%; height: 160px; background: var(--bg-base); box-shadow: var(--shadow-in); border: none; border-radius: 12px; padding: 0.75rem 1rem; color: var(--text-primary); font-family: var(--font-body); font-size: 12px; outline: none; resize: vertical; line-height: 1.4;"></textarea>
-                        <button type="button" class="btn-primary" id="btnDownloadCLPDF" style="width: 100%; justify-content: center; padding: 0.75rem;">
-                            <span>Download PDF Cover Letter</span>
+            </main>
+
+            <!-- WORKSPACE 2: Dual-Engine Resume Screener -->
+            <main class="workspace-view" id="screenerWorkspace">
+                <div class="screener-header-row">
+                    <div>
+                        <h2>Dual-Engine Resume Screener</h2>
+                        <p>Leverage the power of Gemini 2.0's cognitive understanding or our lightning-fast Smart Local Heuristic engine for precise candidate matching.</p>
+                    </div>
+
+                    <!-- Dual Engine Toggle Switch -->
+                    <div class="engine-toggle-switch">
+                        <button type="button" class="engine-btn active" id="btnEngineCognitive">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 18v-5.25m0 0a6.01 6.01 0 001.5-.189m-1.5.189a6.01 6.01 0 01-1.5-.189m3.75 7.478a12.06 12.06 0 01-4.5 0m3.75 2.383a14.406 14.406 0 01-3 0M14.25 18v-.192c0-.983.658-1.823 1.508-2.316a7.5 7.5 0 10-7.516 0c.85.493 1.508 1.333 1.508 2.316V18"/></svg>
+                            <span>Cognitive LLM</span>
+                        </button>
+                        <button type="button" class="engine-btn" id="btnEngineLocal">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3.75 13.5l10.5-11.25L12 10.5h8.25L9.75 21.75 12 13.5H3.75z"/></svg>
+                            <span>Smart Local</span>
                         </button>
                     </div>
                 </div>
-            </section>
-        </main>
 
-        <!-- Saved Candidates CRM Workspace -->
-        <main class="workspace" id="crmWorkspace" style="display: none;">
-            <section class="panel" style="grid-column: span 2; max-height: calc(100vh - 8rem); overflow-y: auto;">
-                <div class="panel-header" style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(0,0,0,0.05); padding-bottom: 1rem; margin-bottom: 1rem;">
-                    <div>
-                        <h2>Saved Candidates (CRM Tracker)</h2>
-                        <p>Track your saved candidates, update recruitment status, and draft emails</p>
+                <!-- Screener Body Grid -->
+                <div class="screener-body-grid">
+                    <!-- Left: JD Editor & Upload Box -->
+                    <div class="screener-left-col">
+                        <div class="soft-card">
+                            <div class="card-header-row">
+                                <h3>Target Job Description</h3>
+                                <button type="button" class="btn-template-sm" id="btnSaveCustomJD">+ Save Current</button>
+                            </div>
+                            <div class="template-pills-row" id="templateButtons">
+                                <button type="button" class="pill-btn skeleton" data-jd="software_engineer">Software Engineer</button>
+                                <button type="button" class="pill-btn skeleton" data-jd="data_scientist">Data Scientist</button>
+                                <button type="button" class="pill-btn skeleton" data-jd="product_manager">Product Manager</button>
+                            </div>
+                            <div class="inset-textarea-wrap">
+                                <textarea id="jdInput" placeholder="Paste target Job Description here... (Include required skills, experience, and educational qualifications)"></textarea>
+                            </div>
+                        </div>
+
+                        <!-- Dropzone Card -->
+                        <div class="soft-card upload-dropzone-card">
+                            <div class="dropzone-area" id="dropzone">
+                                <input type="file" id="fileInput" multiple accept=".pdf,.docx,.txt" style="display: none;">
+                                <div class="dropzone-icon-circle">
+                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m3.75 9v6m3-3l-3-3m0 0l-3 3m-6-2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z"/></svg>
+                                </div>
+                                <h4>Upload Candidate Resumes</h4>
+                                <p>Drop PDF, Word, or Text files here to begin analysis.<br><small>Maximum 25MB per file.</small></p>
+                                <button type="button" class="btn-secondary-pill" id="btnSelectFiles">Select Files</button>
+                            </div>
+
+                            <div class="file-queue-container" id="fileQueueContainer" style="display: none;">
+                                <div class="queue-header">
+                                    <span>Selected Resumes</span>
+                                    <button type="button" class="btn-text-danger" id="btnClearQueue">Clear All</button>
+                                </div>
+                                <div class="queue-list" id="queueList"></div>
+                                <button type="button" class="btn-primary-block" id="btnRunScreen">
+                                    <span>Run Screen Pipeline &rsaquo;&rsaquo;</span>
+                                </button>
+                            </div>
+                        </div>
                     </div>
-                    <button type="button" class="btn-template" id="btnRefreshCRM" style="padding: 0.5rem 1rem;">Refresh Table</button>
+
+                    <!-- Right: Analysis Inspection / Live Top Match Inspection -->
+                    <div class="screener-right-col" id="screenerResultsArea">
+                        <div class="soft-card candidate-match-card">
+                            <div class="match-header-profile">
+                                <div class="avatar-large">
+                                    <img src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=160&q=80" alt="Sarah Chen" id="inspectAvatar">
+                                </div>
+                                <div class="profile-meta">
+                                    <h3 id="inspectName">Sarah Chen</h3>
+                                    <p id="inspectTitle">Senior Frontend Architect</p>
+                                </div>
+                                <div class="badge-top-match">TOP MATCH</div>
+                            </div>
+
+                            <!-- Circular Score Indicator -->
+                            <div class="score-donut-wrap">
+                                <div class="score-donut">
+                                    <svg viewBox="0 0 120 120" class="donut-svg">
+                                        <circle cx="60" cy="60" r="50" class="donut-bg"></circle>
+                                        <circle cx="60" cy="60" r="50" class="donut-stroke" id="inspectDonutStroke" style="stroke-dashoffset: 31.4;"></circle>
+                                    </svg>
+                                    <div class="donut-inner">
+                                        <span class="donut-number" id="inspectDonutScore">90%</span>
+                                        <span class="donut-label">COGNITIVE FIT</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Breakdown Skill Bars -->
+                            <div class="skill-breakdown-list">
+                                <div class="breakdown-row">
+                                    <div class="breakdown-label">
+                                        <span>&lt;&gt; Technical Stack</span>
+                                        <strong id="scoreTech">95%</strong>
+                                    </div>
+                                    <div class="progress-bar-bg"><div class="progress-bar-fill bg-blue" id="fillTech" style="width: 95%;"></div></div>
+                                </div>
+                                <div class="breakdown-row">
+                                    <div class="breakdown-label">
+                                        <span>🧰 Relevant Experience</span>
+                                        <strong id="scoreExp">88%</strong>
+                                    </div>
+                                    <div class="progress-bar-bg"><div class="progress-bar-fill bg-slate" id="fillExp" style="width: 88%;"></div></div>
+                                </div>
+                                <div class="breakdown-row">
+                                    <div class="breakdown-label">
+                                        <span>🎓 Education & Certs</span>
+                                        <strong id="scoreEdu">82%</strong>
+                                    </div>
+                                    <div class="progress-bar-bg"><div class="progress-bar-fill bg-slate" id="fillEdu" style="width: 82%;"></div></div>
+                                </div>
+                                <div class="breakdown-row">
+                                    <div class="breakdown-label">
+                                        <span>🤝 Soft Skills & Culture</span>
+                                        <strong id="scoreSoft">92%</strong>
+                                    </div>
+                                    <div class="progress-bar-bg"><div class="progress-bar-fill bg-green" id="fillSoft" style="width: 92%;"></div></div>
+                                </div>
+                            </div>
+
+                            <div class="card-action-footer">
+                                <button type="button" class="btn-primary-block" id="btnInspectFullReport">View Detailed Candidate Analysis &rsaquo;</button>
+                            </div>
+                        </div>
+
+                        <!-- Candidates Shortlist Container -->
+                        <div class="soft-card" id="shortlistContainer" style="display: none; margin-top: 1rem;">
+                            <div class="card-header-row">
+                                <h3>Ranked Candidate Shortlist</h3>
+                                <div class="export-btn-group">
+                                    <button type="button" class="btn-secondary-sm" id="btnExportCSV">Export CSV</button>
+                                    <button type="button" class="btn-secondary-sm" id="btnExportJSON">Export JSON</button>
+                                </div>
+                            </div>
+                            <div class="candidates-list" id="candidatesList"></div>
+                        </div>
+                    </div>
                 </div>
-                <div class="crm-table-container" style="overflow-x: auto; background: var(--bg-base); border-radius: 20px; box-shadow: var(--shadow-in); padding: 1rem;">
-                    <table class="crm-table" style="width: 100%; border-collapse: collapse; text-align: left; font-size: 13px;">
-                        <thead>
-                            <tr style="border-bottom: 2px solid rgba(0,0,0,0.05); color: var(--text-muted);">
-                                <th style="padding: 0.75rem 1rem;">Name</th>
-                                <th style="padding: 0.75rem 1rem;">Email</th>
-                                <th style="padding: 0.75rem 1rem;">Phone</th>
-                                <th style="padding: 0.75rem 1rem;">Score</th>
-                                <th style="padding: 0.75rem 1rem;">Fit Tier</th>
-                                <th style="padding: 0.75rem 1rem;">Recruitment Status</th>
-                                <th style="padding: 0.75rem 1rem; text-align: right;">Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody id="crmTableBody">
-                            <tr>
-                                <td colspan="7" style="padding: 2rem; text-align: center; color: var(--text-muted);">No candidates saved yet. Screen resumes and save them to your tracker!</td>
-                            </tr>
-                        </tbody>
-                    </table>
+            </main>
+
+            <!-- WORKSPACE 3: Candidate CRM Tracker -->
+            <main class="workspace-view" id="crmWorkspace">
+                <div class="page-title-header flex-between">
+                    <div>
+                        <h2>Candidate CRM Tracker</h2>
+                        <p>Manage your active talent pipeline and recruitment funnel.</p>
+                    </div>
+                    <div class="view-toggle-pills">
+                        <button type="button" class="pill-btn active">Active View</button>
+                        <button type="button" class="pill-btn">Archived</button>
+                    </div>
                 </div>
-            </section>
-        </main>
+
+                <!-- 4 CRM Stat Cards -->
+                <div class="metrics-grid">
+                    <div class="metric-card">
+                        <span class="metric-label">TOTAL APPLICANTS</span>
+                        <div class="metric-value">1,284</div>
+                        <span class="metric-subtext text-success">↗ +12% from last month</span>
+                    </div>
+                    <div class="metric-card">
+                        <span class="metric-label">AVG. MATCH SCORE</span>
+                        <div class="metric-value text-primary">84%</div>
+                        <span class="metric-subtext text-primary">⚡ Top 5% Talent Pool</span>
+                    </div>
+                    <div class="metric-card">
+                        <span class="metric-label">INTERVIEWS</span>
+                        <div class="metric-value">42</div>
+                        <span class="metric-subtext text-secondary">🕒 8 scheduled today</span>
+                    </div>
+                    <div class="metric-card">
+                        <span class="metric-label">HIRES</span>
+                        <div class="metric-value text-success">15</div>
+                        <span class="metric-subtext text-success">✓ Target reached</span>
+                    </div>
+                </div>
+
+                <!-- Candidate Pipeline Table Card -->
+                <div class="soft-card crm-main-card">
+                    <div class="card-header-row">
+                        <h3>Candidate Pipeline</h3>
+                        <div class="header-actions-group">
+                            <button type="button" class="btn-icon-soft" id="btnFilterCRM" title="Filter"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3c-4.97 0-9 4.03-9 9 0 2.12.74 4.07 1.97 5.61L4.35 20.7a1 1 0 001.41 1.41l3.09-.62A8.96 8.96 0 0012 21c4.97 0 9-4.03 9-9s-4.03-9-9-9z"/></svg></button>
+                            <button type="button" class="btn-icon-soft" id="btnDownloadCRM" title="Download"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3"/></svg></button>
+                        </div>
+                    </div>
+
+                    <div class="table-responsive">
+                        <table class="crm-table">
+                            <thead>
+                                <tr>
+                                    <th>CANDIDATE</th>
+                                    <th>RECRUITMENT STATUS</th>
+                                    <th>MATCH SCORE</th>
+                                    <th style="text-align: right;">ACTIONS</th>
+                                </tr>
+                            </thead>
+                            <tbody id="crmTableBody">
+                                <!-- Demo rows -->
+                                <tr>
+                                    <td>
+                                        <div class="cand-profile-cell">
+                                            <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=120&q=80" class="cand-avatar">
+                                            <div>
+                                                <div class="cand-name">Alex Rivera</div>
+                                                <div class="cand-sub">Senior Product Designer</div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td><span class="status-pill status-offered">Offered</span></td>
+                                    <td>
+                                        <div class="score-bar-inline">
+                                            <div class="bar-fill-inline bg-green" style="width: 96%;"></div>
+                                            <span>96%</span>
+                                        </div>
+                                    </td>
+                                    <td style="text-align: right;">
+                                        <button type="button" class="btn-template-sm" onclick="sendCandidateEmail('Alex Rivera', 'alex@example.com', 'invite', 96)">Invite</button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </main>
+
+            <!-- WORKSPACE 4: Resume & Cover Letter Builder -->
+            <main class="workspace-view" id="generatorWorkspace">
+                <div class="page-title-header flex-between">
+                    <div>
+                        <h2>Application Builder</h2>
+                        <p>Draft ATS-optimized documents with AI assistance</p>
+                    </div>
+                    <button type="button" class="btn-secondary-pill" id="btnAIAutofill">✨ AI Auto-fill</button>
+                </div>
+
+                <!-- Step Wizard -->
+                <div class="wizard-stepper">
+                    <div class="step-item active">
+                        <div class="step-circle">1</div>
+                        <span>Details</span>
+                    </div>
+                    <div class="step-divider"></div>
+                    <div class="step-item">
+                        <div class="step-circle">2</div>
+                        <span>Experience</span>
+                    </div>
+                    <div class="step-divider"></div>
+                    <div class="step-item">
+                        <div class="step-circle">3</div>
+                        <span>Skills</span>
+                    </div>
+                    <div class="step-divider"></div>
+                    <div class="step-item">
+                        <div class="step-circle">4</div>
+                        <span>Review</span>
+                    </div>
+                </div>
+
+                <!-- Builder Grid Layout -->
+                <div class="builder-grid">
+                    <!-- Left: Form Panel -->
+                    <div class="soft-card builder-form-card">
+                        <h3>Personal Information</h3>
+                        <div class="form-row-2">
+                            <div class="form-group">
+                                <label>Full Name</label>
+                                <input type="text" id="builderName" placeholder="Alexander Sterling" value="Alexander Sterling">
+                            </div>
+                            <div class="form-group">
+                                <label>Professional Title</label>
+                                <input type="text" id="builderTitle" placeholder="Senior Cloud Architect" value="Senior Cloud Architect">
+                            </div>
+                        </div>
+                        <div class="form-row-2">
+                            <div class="form-group">
+                                <label>Email Address</label>
+                                <input type="email" id="builderEmail" placeholder="alex.sterling@techmail.com" value="alex.sterling@techmail.com">
+                            </div>
+                            <div class="form-group">
+                                <label>Phone Number</label>
+                                <input type="text" id="builderPhone" placeholder="+1 (555) 902-4431" value="+1 (555) 902-4431">
+                            </div>
+                        </div>
+
+                        <h3 style="margin-top: 1.5rem;">Work Experience <button type="button" class="btn-icon-plus" id="btnAddExperience">+</button></h3>
+                        <div id="experienceContainer">
+                            <div class="builder-item-row">
+                                <button type="button" class="btn-delete-row">&times; Remove</button>
+                                <h4>Global Tech Solutions <small>(2019 - Present)</small></h4>
+                                <p>Led a team of 15 engineers to migrate legacy infrastructure to AWS, achieving a 40% reduction in operational costs and 99.99% uptime.</p>
+                            </div>
+                        </div>
+
+                        <h3 style="margin-top: 1.5rem;">Skills & Competencies</h3>
+                        <textarea id="builderSkills" placeholder="Enter skills separated by commas..." style="height: 70px;">AWS, Azure, GCP, Kubernetes, Docker, Terraform, Ansible, CI/CD Pipelines, Cybersecurity Compliance</textarea>
+
+                        <div class="builder-actions-footer">
+                            <button type="button" class="btn-secondary-pill" id="btnSaveDraft">Save Draft</button>
+                            <button type="button" class="btn-primary-pill" id="btnNextStep">Next Step &rarr;</button>
+                        </div>
+                    </div>
+
+                    <!-- Right: Document Preview Panel -->
+                    <div class="soft-card builder-preview-card">
+                        <div class="card-header-row">
+                            <h3>Document Preview</h3>
+                            <div class="zoom-controls">
+                                <button type="button" class="btn-icon-soft">🔍-</button>
+                                <button type="button" class="btn-icon-soft">🔍+</button>
+                            </div>
+                        </div>
+
+                        <!-- Live Resume Document Page Mockup -->
+                        <div class="document-page-paper">
+                            <div class="doc-header-block">
+                                <h2>ALEXANDER STERLING</h2>
+                                <h4>SENIOR CLOUD ARCHITECT</h4>
+                                <p>SAN FRANCISCO, CA • ALEX.STERLING@TECHMAIL.COM • (555) 902-4431</p>
+                            </div>
+                            <hr class="doc-divider">
+                            <div class="doc-section">
+                                <h5>PROFESSIONAL PROFILE</h5>
+                                <p>Visionary Cloud Architect with over 10 years of experience in designing scalable, secure, and highly available distributed systems. Proven track record in orchestrating complex cloud migrations.</p>
+                            </div>
+                            <div class="doc-section">
+                                <h5>CORE COMPETENCIES</h5>
+                                <p>AWS / Azure / GCP • Kubernetes & Docker • Terraform & Ansible • CI/CD Pipelines • Cybersecurity Compliance</p>
+                            </div>
+                            <div class="doc-section">
+                                <h5>EXPERIENCE</h5>
+                                <p><strong>Global Tech Solutions</strong> <em>2019 - Present</em><br>Lead Cloud Engineer<br>• Architected serverless microservices platform supporting 5M+ DAU.<br>• Reduced cloud spend by $1.2M annually via automated right-sizing.</p>
+                            </div>
+                        </div>
+
+                        <!-- ATS Score Banner & Downloads -->
+                        <div class="ats-score-banner">
+                            <div class="score-badge-green">✓ ATS Score: 94/100 (Excellent)</div>
+                            <div class="doc-download-buttons">
+                                <button type="button" class="btn-primary-pill" id="btnGeneratePDF">Download ATS PDF</button>
+                                <button type="button" class="btn-secondary-pill" id="btnGenerateDOCX">Download ATS DOCX</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+
+            <!-- WORKSPACE 5: Keyword Matcher & Analytics -->
+            <main class="workspace-view" id="analyticsWorkspace">
+                <div class="breadcrumbs-bar">
+                    <span>Candidates</span> &rsaquo; <span>Alex Rivera</span> &rsaquo; <strong style="color: var(--primary);">Keyword Matcher</strong>
+                </div>
+
+                <div class="page-title-header flex-between">
+                    <div>
+                        <h2>Keyword Alignment Analysis</h2>
+                        <p>A comparative look at the candidate's core competencies against the Senior Product Designer requirement stack.</p>
+                    </div>
+                    <div class="cognitive-match-badge">
+                        <div class="badge-ring">82%</div>
+                        <div>
+                            <strong>COGNITIVE MATCH</strong>
+                            <span>Strong Fit</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Matcher Body Grid -->
+                <div class="analytics-grid">
+                    <!-- Left: Job Requirements & AI Recommendation -->
+                    <div class="analytics-left">
+                        <div class="soft-card">
+                            <h3>Job Requirements</h3>
+                            <div class="req-section">
+                                <h5>CORE TECH STACK</h5>
+                                <div class="req-pills">
+                                    <span class="req-pill match"><span class="dot green"></span> Figma (Advanced)</span>
+                                    <span class="req-pill match"><span class="dot green"></span> React Native</span>
+                                    <span class="req-pill missing"><span class="dot red"></span> TypeScript</span>
+                                    <span class="req-pill match"><span class="dot green"></span> Design Systems</span>
+                                </div>
+                            </div>
+                            <div class="req-section" style="margin-top: 1rem;">
+                                <h5>EXPERIENCE & SOFT SKILLS</h5>
+                                <div class="req-pills">
+                                    <span class="req-pill match"><span class="dot green"></span> 5+ Yrs Product Design</span>
+                                    <span class="req-pill match"><span class="dot green"></span> Agile Methodology</span>
+                                    <span class="req-pill missing"><span class="dot red"></span> Stakeholder Management</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- AI Recommendation Card -->
+                        <div class="soft-card ai-recommendation-card">
+                            <div class="ai-header">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09z"/></svg>
+                                <h4>AI Recommendation</h4>
+                            </div>
+                            <p>Alex Rivera demonstrates exceptional strength in UI craftsmanship and system-level thinking. While TypeScript knowledge is not explicitly stated in their resume, their expertise in complex component architecture suggests a high potential for rapid upskilling.</p>
+                        </div>
+                    </div>
+
+                    <!-- Right: Candidate Profile Match List & Density -->
+                    <div class="analytics-right">
+                        <div class="soft-card">
+                            <div class="card-header-row">
+                                <h3>Candidate Profile Breakdown</h3>
+                                <span class="badge-updated">Updated 2h ago</span>
+                            </div>
+
+                            <div class="keyword-check-list">
+                                <div class="check-item verified">
+                                    <div class="check-icon">✓</div>
+                                    <div class="check-info">
+                                        <strong>Figma Expert</strong>
+                                        <p>Found in: Portfolio, Resume Page 1</p>
+                                    </div>
+                                    <span class="tag-verified">VERIFIED ✓</span>
+                                </div>
+
+                                <div class="check-item verified">
+                                    <div class="check-icon">✓</div>
+                                    <div class="check-info">
+                                        <strong>Design Systems</strong>
+                                        <p>Found in: Exp. at 'Meta' & 'Dropbox'</p>
+                                    </div>
+                                    <span class="tag-verified">VERIFIED ✓</span>
+                                </div>
+
+                                <div class="check-item missing">
+                                    <div class="check-icon">✕</div>
+                                    <div class="check-info">
+                                        <strong>TypeScript</strong>
+                                        <p>No direct match found</p>
+                                    </div>
+                                    <span class="tag-missing">MISSING ✕</span>
+                                </div>
+
+                                <div class="check-item verified">
+                                    <div class="check-icon">✓</div>
+                                    <div class="check-info">
+                                        <strong>React Native</strong>
+                                        <p>Found in: Certifications</p>
+                                    </div>
+                                    <span class="tag-verified">VERIFIED ✓</span>
+                                </div>
+
+                                <div class="check-item missing">
+                                    <div class="check-icon">✕</div>
+                                    <div class="check-info">
+                                        <strong>Stakeholder Management</strong>
+                                        <p>Ambiguous match found</p>
+                                    </div>
+                                    <span class="tag-missing">MISSING ✕</span>
+                                </div>
+                            </div>
+
+                            <div class="density-bar-section">
+                                <div class="flex-between">
+                                    <strong>Keyword Density</strong>
+                                    <span class="text-primary font-bold">TOP QUARTILE</span>
+                                </div>
+                                <div class="stacked-bar">
+                                    <div class="bar-seg bg-blue" style="width: 45%;" title="TECH (45%)"></div>
+                                    <div class="bar-seg bg-cyan" style="width: 35%;" title="EXP (35%)"></div>
+                                    <div class="bar-seg bg-slate" style="width: 20%;" title="SOFT (20%)"></div>
+                                </div>
+                                <div class="bar-legend">
+                                    <span><span class="dot blue"></span> TECH (45%)</span>
+                                    <span><span class="dot cyan"></span> EXP (35%)</span>
+                                    <span><span class="dot slate"></span> SOFT (20%)</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
     </div>
 
     <!-- Candidate Detailed Slide-Out Drawer -->
     <div class="drawer-overlay" id="drawerOverlay"></div>
     <div class="drawer" id="candidateDrawer">
         <button class="drawer-close" id="btnCloseDrawer">&times;</button>
-        <div class="drawer-content" id="drawerContent">
-            <!-- Dynamically populated candidate profile -->
-        </div>
+        <div class="drawer-content" id="drawerContent"></div>
     </div>
 
-    <!-- Toast Notification Container -->
+    <!-- Toast Container -->
     <div class="toast-container" id="toastContainer"></div>
 </body>
 </html>

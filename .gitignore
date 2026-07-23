@@ -7,3 +7,4 @@ shortlist.csv
 *.log
 .system_generated/
 .DS_Store
+.mcp.json
