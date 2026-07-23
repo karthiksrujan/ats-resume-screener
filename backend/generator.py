@@ -1,6 +1,8 @@
 import os
 from pathlib import Path
+import docx
 from docx import Document
+from docx.shared import Pt
 from reportlab.lib.pagesizes import letter
 from reportlab.lib.units import inch
 from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, HRFlowable
@@ -194,10 +196,10 @@ def generate_ats_docx(data: dict) -> Path:
     # Page setup - 0.75" margins
     sections = doc.sections
     for section in sections:
-        section.top_margin = inch * 0.75
-        section.bottom_margin = inch * 0.75
-        section.left_margin = inch * 0.75
-        section.right_margin = inch * 0.75
+        section.top_margin = int(inch * 0.75)
+        section.bottom_margin = int(inch * 0.75)
+        section.left_margin = int(inch * 0.75)
+        section.right_margin = int(inch * 0.75)
         
     # Header Info
     p_name = doc.add_paragraph()
